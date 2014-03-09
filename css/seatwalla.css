@@ -1,0 +1,578 @@
+p {
+    font-size: 18px;
+}
+
+a{
+    color: #fff;
+    font-weight: bold;
+}
+
+.div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+}
+
+.seatwalla-container {
+    background-color: #EEE2BB;
+}
+
+.seatwalla-h1 {
+    background-color: #5088A3;
+    font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
+    color: #ffffff;
+    font-size: 34px;
+    padding: 10px;
+}
+
+.seatwalla-h2 {
+    background-color: #5088A3;
+    font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
+    color: #ffffff;
+    font-size: 14px;
+    padding: 0 10px 0 10px;
+}
+
+.seatwalla-link {
+    color: #000;
+    font-size: 16px;
+    font-style: oblique;
+}
+.seatwalla-dhamma-reg {
+    color: #000;
+}
+
+.seatwalla-step-text {
+    font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
+    color: #AF3636;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 10px 10px 0 10px;
+}
+
+.seatwalla-step {
+    font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
+    font-size: 14px;
+    color: black;
+    padding: 10px 10px 0 10px;
+}
+
+.seatwalla-show-chart {
+    border: 2px solid;
+    border-radius: 5px;
+    color: #AF3636;
+    font-size: 20px;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+    padding: 2px;
+    width: 200px;
+    margin: 10px;
+}
+
+.seatwalla-file {
+    padding: 10px 0 20px 0;
+}
+
+.seatwalla-course-info {
+    height: 5%;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+}
+
+.seatwalla-hall {
+    width: 100%;
+    height: 95%;
+    position: relative;
+}
+
+.seatwalla-seat-break {
+    page-break-inside: avoid;
+}
+
+.seatwalla-seat {
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box;
+    position: absolute;
+    padding: 3px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.seatwalla-seat-dragstart {
+    opacity: 0.3;
+}
+
+.seatwalla-seat-dragover {
+    border: 1px dotted #ccc;
+    border-radius: 6px;
+}
+
+.seatwalla-seat-container {
+    border: 1px solid #000;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 100%;
+    text-overflow: ellipsis;
+    width: 100%;
+    background-color: #EEE2BB;
+}
+
+.seatwalla-seat-container[data-space=false]:hover {
+    background-color: blue;
+}
+
+.seatwalla-seat-old {
+    border: 4px solid #222;
+}
+
+.seatwalla-content {
+    padding: 4px;
+}
+
+.seatwalla-seat-text-container {
+    position: relative;
+    display: inline-block;
+    width: 96%;
+    bottom: 0;
+    top: 30%;
+}
+
+.seatwalla-seat-text {
+    display: none;
+    text-overflow: clip;
+    height: 38px;
+    width: 97%;
+    overflow: hidden;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.seatwalla-first-name {
+    font-size: 24px;
+}
+
+.pagodawalla-first-name {
+    font-size: 20px;
+}
+
+.pagodawalla-second-name {
+    display: inline-block;
+    width: 100%;
+}
+
+.seatwalla-cell, .seatwalla-label {
+    font-size: 18px;
+    font-weight: bold;
+    display: inline-block;
+    width: 45%;
+}
+
+.seatwalla-label {
+    left: 6px;
+}
+
+.seatwalla-cell {
+    right: 2px;
+}
+
+.seatwalla-second-name {
+    display: inline-block;
+    width: 45%;
+}
+
+.seatwalla-age {
+    display: inline-block;
+    width: 55%;
+    text-align: right;
+}
+
+.seatwalla-age: before {
+    content: ","
+}
+
+.seatwalla-delete {
+    display: inline-block;
+    position: absolute;
+    top: 5px;
+    right: 2px;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.seatwalla-pin {
+    display: inline-block;
+    position: absolute;
+    top: 5px;
+    right: 18px;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.seatwalla-seat-pin:before {
+    /*content: "Fixed";*/
+    /*height: 100%;*/
+    /*color: #aaa;*/
+    /*font-weight: bold;*/
+    /*text-shadow: 1px 1px #FFF, -1px -1px #333;*/
+    /*font-size: 14px;*/
+}
+
+.seatwalla-seat-pin {
+    margin: auto;
+    opacity: 0.9;
+}
+
+.seatwalla-seat-pin:after {
+    background-color: transparent;
+    font-size: 24px;
+    color: #ddd;
+    text-shadow: 1px 1px #FFF, -1px -1px #333;
+    font-size: 14px;
+    text-decoration: underline;
+    top: 36%;
+    left: 50%;
+    position: absolute;
+}
+
+.seatwalla-edit {
+    display: inline-block;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+}
+
+.seatwalla-edit-container {
+    background-color: #aaa;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box; /* Firefox, other Gecko */
+    box-sizing: border-box;
+    position: absolute;
+    padding: 6px;
+    height: 250px;
+}
+
+.seatwalla-add-student-top, .seatwalla-add-student-right, .seatwalla-add-student-bottom, .seatwalla-add-student-left {
+    position: absolute;
+    display: inline-block;
+}
+
+.seatwalla-add-space-top, .seatwalla-add-space-right, .seatwalla-add-space-bottom, .seatwalla-add-space-left {
+    position: absolute;
+    display: inline-block;
+}
+
+.seatwalla-seat-first-name-edit, .seatwalla-seat-second-name-edit, .seatwalla-seat-age-edit, .seatwalla-seat-num-edit {
+    height: 10%;
+    width: 100%;
+}
+
+.seatwalla-seat-text-edit {
+    height: 40%;
+    width: 100%;
+}
+
+.seatwalla-edit-done {
+    position: absolute;
+    right: 7px;
+    bottom: 5px;
+}
+
+.seatwalla-edit-cancel {
+    position: absolute;
+    left: 7px;
+    bottom: 5px;
+}
+
+.seatwalla-edit-cancel:hover, .seatwalla-edit-done:hover {
+    cursor: pointer;
+    color: #AF3636;
+}
+
+.seatwalla-seat i {
+    display: none;
+    font-size: 16px;
+    z-index: 1000;
+}
+
+.seatwalla-seat:hover i {
+    display: inline-block;
+    color: #888;
+}
+
+.seatwalla-seat i:hover {
+    font-size: 20px;
+    color: #AF3636;
+}
+
+.seatwalla-add-space-top, .seatwalla-add-space-right, .seatwalla-add-space-left {
+    cursor: pointer;
+}
+
+.seatwalla-fixed-icon {
+    display: inline-block;
+    position: absolute;
+    top: 5%;
+    left: 25%;
+}
+
+.seatwalla-seat:hover .seatwalla-fixed-icon {
+    display: inline-block;
+}
+
+.seatwalla-tools-tray:before {
+    content: "";
+    height: 100%;
+}
+
+.seatwalla-tools-tray {
+    z-index: 5000;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
+    display: none;
+    top: 45%;
+    left: 35%;
+    width: 30%;
+    position: absolute;
+}
+
+.seatwalla-hidden-info {
+    display: none;
+}
+
+.seatwalla-button {
+    background-color: blue;
+    color: white;
+    width: 200px;
+    height: 200px;
+    display: inline-block;
+    font-size: 21px;
+}
+
+.seatwalla-help, .pagoda-help {
+    font-size: 20px;
+    color: blue;
+}
+
+.seatwalla-help-content, .pagoda-help-content {
+    display: inline-block;
+    width: 870px;
+    height: 800px;
+    overflow: auto;
+    border: 4px solid #eee;
+    display: none;
+    color: #fff;
+    background-color: blue;
+    position: absolute;
+    top: 2px;
+    left: 15%;
+    padding: 10px;
+}
+
+.seatwalla-help-hide, .pagoda-help-hide {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: #fff;
+}
+
+.pagoda-container {
+    display: none;
+}
+
+.pagoda-chart {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top;
+}
+
+.pagoda-chart-container {
+    overflow-y: auto;
+    position: absolute;
+    top : 40px;
+    bottom: 0;
+    width: 84%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px;
+    background-color: #5088A3;
+}
+
+.pagoda-student-list {
+    display: inline-block;
+    height: 500px;
+    overflow-y: auto;
+    width: 100%;
+
+}
+
+.pagoda-student-list-container {
+    border: 2px solid gray;
+    text-align: center;
+    border-radius: 6px;
+    background-color: #5088A3;
+    opacity: 1.3;
+    color: white;
+    display: inline-block;
+    width: 14%;
+    height: 100%;
+    margin-left: 5px;
+    font-size: 20px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    right: 1px;
+    position: fixed;
+    top: 40px;
+}
+
+.pagoda-student-list-item {
+    height: 20px;
+    cursor: pointer;
+}
+
+.pagoda-controls {
+    height: 30px;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+.pagoda-centre-list {
+    display: inline-block;
+    width: 23%;
+}
+
+.pagoda-levels {
+    display: inline-block;
+
+}
+
+.pagoda-back-to-seating {
+    display: inline-block;
+
+}
+
+.pagoda-cell {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+    padding: 2px;
+    vertical-align: top;
+}
+
+.pagoda-cell[data-cellno='-1'] {
+    visibility: hidden;
+}
+
+.pagoda-cell-content {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding-top: 14px;
+    padding-left: 2px;
+    overflow: hidden;
+}
+
+.pagoda-cell-content .pagoda-shared-cell-content {
+    height: 50%;
+}
+
+.pagoda-floor {
+    background-color: #EEE2BB;
+    border: 1px solid #5088A3;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.pagoda-floor-title {
+    text-align: center;
+    font-size: 24px;
+    color: blue;
+    padding: 5px;
+    background-color: #5088A3;
+    color: #fff;
+}
+
+.pagoda-cell-content-data {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: normal;
+}
+
+.seatwalla-cellNo {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.seatwalla-cellNo {
+    position: absolute;
+    top: 2px;
+    left: 6px;
+}
+
+.seatwalla-notes-detail {
+    display: none;
+    background-color: #0000FF;
+    height: 200px;
+    width: 200px;
+    overflow: auto;
+    border: 4px solid #bbb;
+    border-radius: 3px;
+    position: absolute;
+    font-size: 14px;
+    color: #FFF;
+    padding: 4px;
+
+}
+
+.seatwalla-room {
+    display: inline-block;
+    width: 100%;
+    height: 26px;
+}
+
+.seatwalla-seat-room-edit {
+    background-color: #EEE2BB;
+    border: none;
+    margin-right: 2px;
+    display: inline-block;
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pagoda-student-search {
+    height: 35px;
+    width: 100%;
+
+}
+
+.pagoda-student-search-text {
+    height: 24px;
+    width: 90%;
+}

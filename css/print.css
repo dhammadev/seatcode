@@ -1,0 +1,146 @@
+@media print {
+    @page {
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 12pt;
+    }
+
+    .seatwalla-label, .seatwalla-cell, .seatwalla-seat-room-edit {
+        font-size: 1em;
+        font-weight: normal;
+    }
+
+    .seatwalla-room, .seatwalla-seat-room-edit {
+        background-color: #fff;
+    }
+
+    .seatwalla-seat-container {
+        background-color: #fff;
+    }
+
+    .seatwalla-seat-pin:before {
+        content: "";
+    }
+
+    .seatwalla-delete, .seatwalla-edit, .seatwalla-pin, .seatwalla-add-space-top, .seatwalla-add-space-left, .seatwalla-add-space-right {
+        display: none;
+    }
+
+    .seatwalla-first-name {
+        font-size: 1em;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+
+    .seatwalla-second-name {
+        font-size: 1em;
+        white-space: nowrap;
+        display: block;
+    }
+    .seatwalla-help, .pagoda-help {
+        display: none;
+    }
+
+    .pagoda-chart-container {
+        overflow-y: inherit;
+        width: 100%;
+    }
+
+    .pagoda-floor {
+        background-color: white;
+        width: 100%;
+        page-break-after: always;
+    }
+
+    .pagoda-controls {
+        display: none;
+    }
+
+    .pagoda-student-list-container {
+        display: none;
+    }
+
+    .seatwalla-seat:nth-of-type(6) {
+        page-break-after: always;
+    }
+
+    ::-webkit-input-placeholder {
+        opacity: 0;
+    }
+
+    :-moz-placeholder {
+        /* Firefox 18- */
+        opacity: 0;
+    }
+
+    ::-moz-placeholder {
+        /* Firefox 19+ */
+        opacity: 0;
+    }
+
+    :-ms-input-placeholder {
+        opacity: 0;
+    }
+
+    .seatwalla-teachers-name, .seatwalla-course-date-to, .seatwalla-course-date-from {
+        border: none;
+        margin-right: 2px;
+    }
+
+    .seatwalla-teachers-name {
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .seatwalla-assign-cell {
+        display: none;
+    }
+
+    .seatwalla-age {
+        display: none;
+    }
+
+    .seatwalla-seat-old {
+        border: 3px solid #aaa;
+    }
+
+
+}
+
+/*@media print and (width: 8.5in) and (height: 11in) {
+    @page {
+        margin: 1in;
+    }
+
+    .seatwalla-hall {
+        height: 100%;
+       *//* height: 420mm;
+        width: 297mm;
+        overflow: visible;
+        margin: auto;*//*
+    }
+
+}
+
+
+@media print and (width: 11in) and (height: 8.5in) {
+    @page {
+        margin: 1in;
+    }
+
+    .seatwalla-hall {
+        width: 100%;
+    }
+
+}
+
+@media print and (orientation:landscape) {
+    .seatwalla-hall {
+        width: 100%;
+    }
+}
+
+@media print and (orientation:potrait) {
+    .seatwalla-hall {
+        width: 100%;
+    }
+}*/

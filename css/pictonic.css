@@ -1,0 +1,56 @@
+@charset "UTF-8";
+@font-face
+{
+    font-family: pictonic;
+    src: url('../font/pictonic.eot');
+    src: url('../font/pictonic.eot?#iefix') format('embedded-opentype'),
+        url('../font/pictonic.woff') format('woff'),
+        url('../font/pictonic.ttf') format('truetype'),
+        url('../font/pictonic.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.pictonic
+{
+	font-family: "pictonic";
+	font-weight: normal; font-style: normal;
+	-webkit-font-smoothing:  antialiased !important;
+	-moz-font-smoothing:  antialiased !important;
+	font-smoothing:  antialiased !important;
+	line-height:1em;
+}
+
+a.pictonic, span.pictonic, small.pictonic {
+	display: -moz-inline-stack;
+	display:inline-block;
+	zoom: 1;
+	*display: inline;
+}
+
+[class^="icon-"], [class*=" icon-"]
+{
+	font-family: "pictonic";
+	font-weight: normal; font-style: normal;
+	-webkit-font-smoothing:  antialiased !important;
+	-moz-font-smoothing:  antialiased !important;
+	font-smoothing:  antialiased !important;
+	line-height:1em;
+}
+
+a[class^="icon-"], a[class*=" icon-"], span[class^="icon-"], span[class*=" icon-"], small[class^="icon-"], small[class*=" icon-"] {
+	display: -moz-inline-stack;
+	display:inline-block;
+	zoom: 1;
+	*display: inline;
+}
+
+.icon-kub-approve:before { content:""; }
+.icon-kub-remove:before { content:""; }
+.icon-kub-info:before { content:""; }
+.icon-imgur:before { content:""; }
+.icon-oxp-check:before { content:""; }
+.icon-oxp-remove:before { content:""; }
+.icon-pin-1:before { content:""; }
+.icon-plus:before { content:""; }
+.icon-kub-edit:before { content:""; }
