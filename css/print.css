@@ -1,16 +1,17 @@
 @media print {
     @page {
         font-family: Verdana, Arial, Helvetica, sans-serif;
-        font-size: 12pt;
+        /*font-size: 12pt;*/
     }
 
     .seatwalla-label, .seatwalla-cell, .seatwalla-seat-room-edit {
-        font-size: 1em;
-        font-weight: normal;
+        /*font-size: 1em;*/
+        /*font-weight: normal;*/
     }
 
     .seatwalla-room, .seatwalla-seat-room-edit {
         background-color: #fff;
+        border: none;
     }
 
     .seatwalla-seat-container {
@@ -26,16 +27,18 @@
     }
 
     .seatwalla-first-name {
-        font-size: 1em;
+        /*font-size: 1em;*/
         white-space: nowrap;
-        font-weight: bold;
+       /* font-weight: 100;*/
     }
 
     .seatwalla-second-name {
-        font-size: 1em;
+        /*font-size: 1em;*/
         white-space: nowrap;
         display: block;
+        width: 100%;
     }
+
     .seatwalla-help, .pagoda-help {
         display: none;
     }
@@ -51,6 +54,14 @@
         page-break-after: always;
     }
 
+    .pagoda-col.name, .pagoda-col-header.name {
+        width: 40%;
+    }
+
+    .pagoda-col.cell, .pagoda-col-header.cell {
+        width: 20%;
+    }
+
     .pagoda-controls {
         display: none;
     }
@@ -59,8 +70,20 @@
         display: none;
     }
 
+    .pagoda-row {
+        width: 100%;
+        border-bottom: 1px solid #ccc;
+        page-break-inside: avoid;
+        -webkit-region-break-inside: avoid;
+    }
+
+    .pagoda-row:nth-child(2n + 1) {
+        background-color: #ddd;
+    }
+
     .seatwalla-seat:nth-of-type(6) {
         page-break-after: always;
+        -webkit-region-break-after: always;
     }
 
     ::-webkit-input-placeholder {
@@ -100,10 +123,23 @@
     }
 
     .seatwalla-seat-old {
-        border: 3px solid #aaa;
+        border: 3px solid #000;
     }
 
+    tr {
+        height: 60mm;
+        display: block;
+        page-break-inside: avoid;
+        -webkit-region-break-inside: avoid;
+    }
 
+    .seatwalla-check {
+        display: none;
+    }
+
+    table {
+        border: none;
+    }
 }
 
 /*@media print and (width: 8.5in) and (height: 11in) {

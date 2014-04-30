@@ -111,6 +111,7 @@
                 }
 
                 options.studentData = data;
+                options.originalData = _.clone(data);
                 options.totalStudent = data.length;
 
             }
@@ -412,10 +413,12 @@
 
         // data.imgSrc = seatwalla.options.imgSrc;
 
-        var $seatContentTemplate = _.template("<div class='seatwalla-seat-container<%if(student.old){%> seatwalla-seat-old <%}%> <%if(student.pin){%> seatwalla-seat-pin'<%}%>'>" +
+        var $seatContentTemplate = _.template("<div class='seatwalla-seat-container<%if(student.old){%> seatwalla-seat-old <%}%> <%if(space){%> seatwalla-seat-pin'<%}%>'>" +
                                               "<div class='seatwalla-delete'><i class='icon-kub-remove'></i></div>" +
 
                                               "<div class='seatwalla-pin'><i class='icon-pin-1 seatwalla-pin-icon'></i></div>" +
+
+                                              "<div class='seatwalla-note'></div>" +
 
                                               "<div class='seatwalla-edit'><i class='icon-kub-edit seatwalla-edit-icon'></i></div>" +
                                               "<div class='seatwalla-add-space-top'><i class='icon-plus seatwalla-add-space-icon'></i></div>" +
@@ -435,8 +438,7 @@
 
                                               "<div class='seatwalla-cell' data-label='<%=seat.label%>'></div>" +
 
-                                              "<input class='seatwalla-seat-room-edit' type='text'  placeholder='Room'  value='<%=student.room%>' editable='true'/>" +
-
+                                              "<input class='seatwalla-seat-room-edit' type='text'  placeholder='Room'  maxlength='10' value='<%=student.room%>' editable='true'/>" +
 
                                               "<div class='seatwalla-seat-text'><%=student.text%></div>" +
                                               "<%}%>" +
@@ -474,6 +476,8 @@
             }
         }
 
+        seatwalla.updateNote($seatContent, data.student);
+
         return $seatContainer;
     };
 
@@ -498,7 +502,8 @@
             height: options.seatHeight + "px"
         });
 
-        $seat.bind("dragstart", function(event) {
+        $seat.off();
+        $seat.on("dragstart", function(event) {
 
             console.log("dragstart");
             var target = $(event.target);
@@ -508,7 +513,7 @@
             event.originalEvent.dataTransfer.setData("index", fromIndex);
         });
 
-        $seat.bind("dragover", function(event) {
+        $seat.on("dragover", function(event) {
             var target = $(event.target);
             var $seat = target.closest(".seatwalla-seat");
             if (!seatwalla.isPin($seat)) {
@@ -521,19 +526,19 @@
             return false;
         });
 
-        $seat.bind("dragleave", function(event) {
+        $seat.on("dragleave", function(event) {
             console.log("dragleave");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragover");
             // $(".seatwalla-seat").removeClass("seatwalla-seat-dragenter");
         });
 
-        $seat.bind("dragend", function(event) {
+        $seat.on("dragend", function(event) {
             console.log("dragend");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragover");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragstart");
         });
 
-        $seat.bind("dragenter", function(event) {
+        $seat.on("dragenter", function(event) {
 
             var target = $(event.target);
             var $seat = target.closest(".seatwalla-seat");
@@ -548,7 +553,7 @@
 
         });
 
-        $seat.bind("drop", function(event) {
+        $seat.on("drop", function(event) {
             if (event.stopPropagation) {
                 event.stopPropagation();
             }
@@ -596,11 +601,13 @@
         var $seatText = $seat.find(".seatwalla-seat-text");
         var $seatSecondName = $seat.find(".seatwalla-second-name");
         var $seatRoomEdit = $seat.find(".seatwalla-seat-room-edit");
+        var $seatNote = $seat.find(".seatwalla-note");
+
         //var $seatRoom = $seat.find(".seatwalla-room");
         var seatWidth = $seat.innerWidth();
 
         var seatTextOffset = $seatSecondName.offset();
-        $seat.bind({
+        $seatNote.on({
             mouseenter: function(e) {
                 var seatwalla = this;
 
@@ -627,7 +634,10 @@
         });
 
         $delete.click(function(event) {
-            seatwalla.deleteSeat(event)
+            var r = confirm("Are you sure, you want to delete the student");
+            if (r == true) {
+                seatwalla.deleteSeat(event);
+            }
         });
         $pin.click(function(event) {
             seatwalla.pinSeat(event, data);
@@ -639,15 +649,15 @@
         });
 
         /*$seatRoomEdit.keypress(function(event){
-            if(event.keyCode == "13") {
-                $seatRoomEdit.attr("data-label", $seatRoomEdit.val());
-            }
-        });*/
+         if(event.keyCode == "13") {
+         $seatRoomEdit.attr("data-label", $seatRoomEdit.val());
+         }
+         });*/
 
-        $seatRoomEdit.focusout(function(event){
-           // if(event.keyCode == "13") {
-                $seat.attr("data-room", $seatRoomEdit.val());
-                $seatRoomEdit.attr("data-label", $seatRoomEdit.val());
+        $seatRoomEdit.focusout(function(event) {
+            // if(event.keyCode == "13") {
+            $seat.attr("data-room", $seatRoomEdit.val());
+            $seatRoomEdit.attr("data-label", $seatRoomEdit.val());
             //}
         });
         $topSpace.click(function(event) {
@@ -694,7 +704,7 @@
             seatwalla.addStudentToGrid(student, index, false);
         });
 
-        if (options.addSideBackRows) {
+        if (options.addSideBackRows == true) {
             seatwalla.addSideBackRows();
         }
 
@@ -1177,6 +1187,83 @@
 
     };
 
+    Seatwalla.prototype.check = function() {
+        var seatwalla = this;
+        seatwalla.extractData();
+        var options = seatwalla.options;
+        var studentData = options.studentData;
+        var originalData = options.originalData;
+
+        var checkList = [];
+
+        if (!originalData) {
+            return;
+        }
+        else {
+
+            var missingStudent = [];
+
+            _.each(originalData, function(origStudent) {
+
+                var found = _.filter(studentData, function(student) {
+                    var same = seatwalla.isSame(origStudent, student);
+                    if (same) {
+                        return true;
+                    }
+                });
+
+                if (found.length == 0) {
+                    origStudent.reason = "missing";
+                    checkList.push(origStudent);
+                }
+
+            });
+        }
+
+        _.each(studentData, function(student) {
+            var numCols = options.seatInRow;
+            var mode = student.index % numCols;
+            if (mode == 0) {
+                if (student.age && (student.age <= 25)) {
+                    student.reason = "young"
+                    checkList.push(student);
+                }
+            }
+        });
+
+        var checkTemplate = _.template("<div class='seatwalla-check-container'>" +
+                                       "<div class='seatwalla-delete-check'><i class='icon-kub-remove'></i></div>" +
+                                       "<%_.each(checkList, function(student){%>" +
+                                       "<% if (student.reason == 'missing') {%>" +
+                                       "<div class='seatwalla-check-student-info'>" +
+                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and is <%=student.age%> years old is missing." +
+                                       "</div>" +
+                                       "<% } else if (student.reason == 'young') {%> " +
+                                       "<div class='seatwalla-check-student-info'>" +
+                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and <%=student.age%> years old is young to be in the aisle." +
+                                       "</div>" +
+                                       "<% }}) %>" +
+                                       "</div>"
+        );
+
+        var $check = $(checkTemplate({checkList: checkList}));
+        $check.find(".seatwalla-delete-check").on("click", function(event) {
+            $check.remove();
+        });
+        $(".hall").append($check);
+
+    };
+
+    Seatwalla.prototype.isSame = function(student1, student2) {
+        if (student1.firstName == student2.firstName && student1.secondName == student2.secondName
+            && student1.num == student2.num) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+
     Seatwalla.prototype.extractData = function(overwriteOptions) {
         var seatwalla = this;
         var lastIndex = seatwalla.getLastIndex();
@@ -1185,6 +1272,7 @@
 
         for (var i = 0; i <= lastIndex; i++) {
             var student = seatwalla.getStudentFromIndex(i);
+            student.index = i;
             dataArr[i] = student;
 
             var studentStr = student.name + "," + student.age + "," + student.num + "," + student.text + "," +
@@ -1200,11 +1288,18 @@
          */
         var options = {};
         options.numCols = parseInt($("#numCols").text());
-        if ($("#addSideBackRows").text()) {
+        var addSideBackOption = $("#addSideBackRows").text();
+
+        if (addSideBackOption == "true") {
             options.numCols = options.numCols + 1;
+            addSideBackOption = true;
         }
+        else {
+            addSideBackOption = false;
+        }
+
         options.seatInRow = options.numCols;
-        options.addSideBackRows = false; //$("#addSideBackRows").val();
+        options.addSideBackRows = addSideBackOption; //false; //$("#addSideBackRows").val();
         options.totalStudent = lastIndex + 1;
         options.gender = $("#gender").text();
         options.seatStyle = $("#seatStyle").text();
@@ -1399,12 +1494,21 @@
 
             $(".seatwalla-edit-container").remove();
 
+
             seatwalla.updateSeat({"student": student, "seat": seatInfo, "index": index, "space": false}, $seat);
         });
 
         $(".seatwalla-edit-cancel").click(function() {
             $(".seatwalla-edit-container").remove();
         });
+    };
+
+    Seatwalla.prototype.updateNote = function($seat, student) {
+        if (student.text && student.text.length > 0) {
+            $seat.find(".seatwalla-note").css("display", "inline-block");
+        } else {
+            $seat.find(".seatwalla-note").css("display", "none");
+        }
     };
 
     Seatwalla.prototype.insert = function(fromIndex, toIndex, $elementNotAdded) {
@@ -1485,6 +1589,9 @@
         }
         else if (method == "assignCells") {
             seatwalla.assignCells(options.$pagoda);
+        }
+        else if (method == "check") {
+            seatwalla.check(options);
         }
     };
 

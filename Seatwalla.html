@@ -12,11 +12,16 @@
     <script src="js/seatwalla.js"></script>
     <script>
         var gender = "male";
+        var pagodaInitialized = false;
         function onload() {
 
             if ($(".seatwalla-hall").children().length > 1) {
                 reload();
             }
+
+            var $pagoda = $(".pagoda-container");
+            $pagoda.pagoda();
+            $pagoda.data("pagoda").execute("init");
         }
         ;
 
@@ -79,37 +84,81 @@
 
         function assignCells(event) {
             var $pagoda = $(".pagoda-container");
-            $pagoda.pagoda();
-            $pagoda.data("pagoda").execute("init");
+            if (!pagodaInitialized) {
 
+                $pagoda.pagoda();
+                $pagoda.data("pagoda").execute("init");
+
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+                $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda")});
+                $(".seatwalla-course-info").hide();
+                pagodaInitialized = true;
+            }
+            else {
+                $pagoda.show();
+                showPagoda(event);
+                $(".hall").hide();
+            }
+        }
+        ;
+
+        function check(event) {
             var $seat = $(".seatwalla-container");
             $seat.seat();
-            $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda")});
-            $(".seatwalla-course-info").hide();
-        }
-        ;
+            $seat.data("seatwalla").execute("check");
+        };
 
         function showPagoda(event) {
-            var $pagoda = $(".pagoda-container");
-            $pagoda.pagoda();
-            $pagoda.data("pagoda").execute("showPagoda");
-            var $courseInfo = $(".seatwalla-course-info");
-            var $seatingHall = $(".seatwalla-hall");
-            var $pagodaContainer = $(".pagoda-container");
-            $courseInfo.hide();
-            $seatingHall.hide();
+            var $pagodaContainer = $(".pagoda-chart-container");
+            $pagodaContainer.children().show();
             $pagodaContainer.show();
+
+            var $chitView = $(".pagoda-chit-print");
+            $chitView.hide();
+
+            var $tableView = $(".pagoda-table-print");
+            $tableView.hide();
+        };
+
+        function showSeating(event) {
+            var $hall = $(".hall");
+            var $pagodaContainer = $(".pagoda-container");
+            $hall.children().show();
+            $hall.show();
+            $pagodaContainer.hide();
+
         }
         ;
 
-        function showSeating(event) {
-            var $courseInfo = $(".seatwalla-course-info");
-            var $seatingHall = $(".seatwalla-hall");
-            var $pagodaContainer = $(".pagoda-container");
-            $courseInfo.show();
-            $seatingHall.show();
+        function showChits(event) {
+            var $pagodaContainer = $(".pagoda-chart-container");
             $pagodaContainer.hide();
 
+            var $studentList = $(".pagoda-student-list-container");
+            $studentList.hide();
+
+            var $chitView = $(".pagoda-chit-print");
+            $chitView.show();
+            var $tableView = $(".pagoda-table-print");
+            $tableView.hide();
+
+            var $pagoda = $(".pagoda-container");
+            $pagoda.data("pagoda").execute("showChits");
+        }
+        ;
+
+        function showTable(event) {
+            var $pagodaContainer = $(".pagoda-chart-container");
+            $pagodaContainer.hide();
+            var $studentList = $(".pagoda-student-list-container");
+            $studentList.hide();
+            var $chitView = $(".pagoda-chit-print");
+            $chitView.hide();
+            var $tableView = $(".pagoda-table-print");
+            $tableView.show();
+            var $pagoda = $(".pagoda-container");
+            $pagoda.data("pagoda").execute("showTable");
         }
         ;
 
@@ -118,8 +167,12 @@
             var floorSelected = $(".pagoda-levels-select").val();
             $pagoda.data("pagoda").execute("showFloor", floorSelected);
 
-        }
-        ;
+        };
+
+        function clearPrintList() {
+            var $pagoda = $(".pagoda-container");
+            $pagoda.data("pagoda").execute("clearPrintList");
+        };
 
         function selectGender(gender) {
             this.gender = gender;
@@ -128,9 +181,10 @@
 
 </head>
 <body onload="onload()">
+
 <div class="seatwalla-container">
     <div class="seatwalla-h1">SeatWalla</div>
-    <div class="seatwalla-h2">Version 2013-03-09</div>
+    <div class="seatwalla-h2">Version 2014-04-27</div>
     <div class="seatwalla-h2">Contact <a href="mailto:seatwalla-na@at.dhamma.org"> seatwalla-na@at.dhamma.org</a></div>
     <div class="seatwalla-h2">Email list: Join user list by sending email to
         <a href="mailto:seatwalla-na-users-subscribe@at.dhamma.org">seatwalla-na-users-subscribe@at.dhamma.org</a>
@@ -139,11 +193,12 @@
     <div class="seatwalla-step-text">STEP 1</div>
     <div class="seatwalla-step">
         <div class="seatwalla-help-text">(a) If you do not have dhamma reg account, please email
-                                         <a class="seatwalla-dhamma-reg" href="mailto:support@regwalla.dhamma.org">Dhamma Reg Support</a> with your name and email address
+            <a class="seatwalla-dhamma-reg" href="mailto:support@regwalla.dhamma.org">Dhamma Reg Support</a> with your
+                                         name and email address
 
         </div>
         <div>
-            <a class="seatwalla-link" href="https://uscan.dhammareg.dhamma.org:7500/index.php/site/login?tc=1371355578">
+            <a class="seatwalla-link" href="https://uscan.dhammareg.dhamma.org:7500/index.php/site/login?tc=1371355578" target="_blank">
                 Go to Dhamma Reg Site
             </a>
         </div>
@@ -204,19 +259,25 @@
 
 </div>
 
-<div class="seatwalla-course-info">
-    <i class='icon-kub-info seatwalla-help'></i>
-    <input type="text" class="seatwalla-teachers-name" placeholder="AT Name"/>
-    <span>From:</span>
-    <input type="text" class="seatwalla-course-date-from" placeholder="From Date"/>
-    <span>To:</span>
-    <input type="text" class="seatwalla-course-date-to" placeholder="To Date"/>
+<div class="hall">
+    <div class="seatwalla-course-info">
+        <div class='seatwalla-help'>Instructions</div>
 
-    <button class="seatwalla-assign-cell" onclick="assignCells()">Assign Pagoda Cells</button>
-    <!--<span class="pagoda-assign-cell-link" onclick="assignCells()">Assign Pagoda Cells</span>-->
-</div>
+        <button class="seatwalla-check" onclick="check()">Check</button>
 
-<div class="seatwalla-hall">
+        <input type="text" class="seatwalla-teachers-name" placeholder="AT Name"/>
+        <span>From:</span>
+        <input type="text" class="seatwalla-course-date-from" placeholder="From Date"/>
+        <span>To:</span>
+        <input type="text" class="seatwalla-course-date-to" placeholder="To Date"/>
+
+        <button class="seatwalla-assign-cell" onclick="assignCells()">Assign Pagoda Cells</button>
+        <!--<span class="pagoda-assign-cell-link" onclick="assignCells()">Assign Pagoda Cells</span>-->
+    </div>
+
+    <div class="seatwalla-hall">
+    </div>
+
 </div>
 <!--
 
@@ -225,12 +286,14 @@
             <button class="seatwalla-button seatwalla-resume" type="button" onclick="continueEditing()"> Continue</button>
 
         </div>-->
-<span class="seatwalla-hidden-info" id="numCols"></span>
-<span class="seatwalla-hidden-info" id="addSideBackRows"></span>
-<span class="seatwalla-hidden-info" id="gender"></span>
-<span class="seatwalla-hidden-info" id="seatStyle"></span>
-<span class="seatwalla-hidden-info" id="centerName"></span>
-<textarea class="seatwalla-notes-detail"></textarea>
+<div class="seat-data">
+    <span class="seatwalla-hidden-info" id="numCols"></span>
+    <span class="seatwalla-hidden-info" id="addSideBackRows"></span>
+    <span class="seatwalla-hidden-info" id="gender"></span>
+    <span class="seatwalla-hidden-info" id="seatStyle"></span>
+    <span class="seatwalla-hidden-info" id="centerName"></span>
+    <textarea class="seatwalla-notes-detail"></textarea>
+</div>
 
 <div class="pagoda-container">
     <div class="pagoda-controls">
@@ -247,22 +310,46 @@
 
         <div class="pagoda-back-to-seating">
             <button onclick="showSeating()">Back to Seating</button>
-            </button>
+
+        </div>
+
+        <div class="pagoda-pagoda-view">
+            <button onclick="showPagoda()">Show Pagoda</button>
+
+        </div>
+
+        <div class="pagoda-chit-view">
+            <button onclick="showChits()">Show Chits</button>
+
+        </div>
+
+        <div class="pagoda-table-view">
+            <button onclick="showTable()">Show Table</button>
+
+        </div>
+
+        <div class="pagoda-clear-print-list">
+            <button onclick="clearPrintList()">Clear Print List</button>
         </div>
 
     </div>
 
-    <div class="pagoda-chart-container">
-        <div class="pagoda-chart">
+    <div class="pagoda">
+        <div class="pagoda-chart-container">
+            <div class="pagoda-chart">
 
+            </div>
+            <div class="pagoda-student-list-container">
+                <div class='pagoda-student-search'>
+                    <input class='pagoda-student-search-text' type='text' placeholder='First Name'/>
+                </div>
+                <div class="pagoda-student-list"></div>
+            </div>
         </div>
+        <div class="pagoda-chit-print"></div>
+        <div class="pagoda-table-print"></div>
     </div>
-    <div class="pagoda-student-list-container">
-        <div class='pagoda-student-search'>
-            <input class='pagoda-student-search-text' type='text' placeholder='First Name'/>
-        </div>
-        <div class="pagoda-student-list"></div>
-    </div>
+
 </div>
 
 <div class="seatwalla-help-content">
@@ -1792,8 +1879,8 @@
     <b>To Save:
         <br>
     </b>
-    Use browser's "Save As" function to save the file in html format. Name it as
-    "Center-Name-Course-Date.html" for future use. For example CVC-2013-11-20.htm.
+    Use browser's "Save As" function to save the file in html format. If on Mac OS, choose "Web Page Complete" option.
+    Name it as "Center-Name-Course-Date.html" for future use. For example CVC-2013-11-20.htm.
     <br>
     Usually you can perform saving by clicking "Control-S" in Windows OS or
     "Command-S" in MacOS.
@@ -1808,12 +1895,14 @@
     appear. Select "Landscape" as page orientation and then print. Refer to your
     browser's help to see how you can print properly.
 
-    <h5>For Mac</h5> - Use Safari for good printing experience. Use 'command P' to print, change
-    orientation and scale to print it properly. If its a large course, its better to print on
-    two pages and glue them togather to keep names readable.
+<h5>For Mac</h5>
+- Use Safari for good printing experience. Use 'command P' to print, change
+orientation and scale to print it properly. If its a large course, its better to print on
+two pages and glue them togather to keep names readable.
 
-    <h5>For Windows</h5> - Use Firefox for good printing experience. Use "Print Preview" to adjust
-    the print output by adjusting the scale and orientation.
+<h5>For Windows</h5>
+- Use Firefox for good printing experience. Use "Print Preview" to adjust
+the print output by adjusting the scale and orientation.
 
 </p>
 </div>
