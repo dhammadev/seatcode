@@ -43,6 +43,9 @@
             var $seat = $(".seatwalla-container");
             $seat.seat();
             $seat.data("seatwalla").reload();
+
+            $(".seatwalla-pinall").removeClass("hidden");
+            $(".seatwalla-unpinall").addClass("hidden");
             //$(".seatwalla-tools-tray").show();
         }
         ;
@@ -91,14 +94,19 @@
 
                 var $seat = $(".seatwalla-container");
                 $seat.seat();
-                $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda")});
+                $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
                 $(".seatwalla-course-info").hide();
+                $(".seatwalla-hall").hide();
                 pagodaInitialized = true;
             }
             else {
                 $pagoda.show();
                 showPagoda(event);
-                $(".hall").hide();
+                var $seat = $(".seatwalla-container");
+                $(".seatwalla-course-info").hide();
+                $(".seatwalla-hall").hide();
+                $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
+
             }
         }
         ;
@@ -107,6 +115,27 @@
             var $seat = $(".seatwalla-container");
             $seat.seat();
             $seat.data("seatwalla").execute("check");
+        };
+
+        function pinAll() {
+            var $seat = $(".seatwalla-container");
+            $seat.seat();
+
+            $(".seatwalla-pinall").addClass("hidden");
+            $(".seatwalla-unpinall").removeClass("hidden");
+
+            $seat.data("seatwalla").execute("pinAll");
+
+        };
+
+        function unpinAll() {
+            var $seat = $(".seatwalla-container");
+            $seat.seat();
+
+            $(".seatwalla-pinall").removeClass("hidden");
+            $(".seatwalla-unpinall").addClass("hidden");
+
+            $seat.data("seatwalla").execute("unpinAll");
         };
 
         function showPagoda(event) {
@@ -121,6 +150,7 @@
             $tableView.hide();
         };
 
+
         function showSeating(event) {
             var $hall = $(".hall");
             var $pagodaContainer = $(".pagoda-container");
@@ -128,8 +158,7 @@
             $hall.show();
             $pagodaContainer.hide();
 
-        }
-        ;
+        };
 
         function showChits(event) {
             var $pagodaContainer = $(".pagoda-chart-container");
@@ -176,7 +205,10 @@
 
         function selectGender(gender) {
             this.gender = gender;
-        }
+        };
+
+
+
     </script>
 
 </head>
@@ -184,7 +216,7 @@
 
 <div class="seatwalla-container">
     <div class="seatwalla-h1">SeatWalla</div>
-    <div class="seatwalla-h2">Version 2014-04-27</div>
+    <div class="seatwalla-h2">Version 2014-05-21</div>
     <div class="seatwalla-h2">Contact <a href="mailto:seatwalla-na@at.dhamma.org"> seatwalla-na@at.dhamma.org</a></div>
     <div class="seatwalla-h2">Email list: Join user list by sending email to
         <a href="mailto:seatwalla-na-users-subscribe@at.dhamma.org">seatwalla-na-users-subscribe@at.dhamma.org</a>
@@ -264,7 +296,8 @@
         <div class='seatwalla-help'>Instructions</div>
 
         <button class="seatwalla-check" onclick="check()">Check</button>
-
+        <button class="seatwalla-pinall" onclick="pinAll()">Pin All</button>
+        <button class="seatwalla-unpinall hidden" onclick="unpinAll()">Unpin All</button>
         <input type="text" class="seatwalla-teachers-name" placeholder="AT Name"/>
         <span>From:</span>
         <input type="text" class="seatwalla-course-date-from" placeholder="From Date"/>
@@ -1875,12 +1908,20 @@
         QAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFA
         BRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAf
         /9k="/>
+
+<p>
+    <b>To Find:
+        <br>
+    </b>
+    Use Control-F on windows and Command-F on Mac to find the student on the seating chart.
+</p>
+
 <p>
     <b>To Save:
         <br>
     </b>
     Use browser's "Save As" function to save the file in html format. If on Mac OS, choose "Web Page Complete" option.
-    Name it as "Center-Name-Course-Date.html" for future use. For example CVC-2013-11-20.htm.
+    Name it as "Center-Name-Course-Date.html" for future use. For example CVC-2013-11-20.html.
     <br>
     Usually you can perform saving by clicking "Control-S" in Windows OS or
     "Command-S" in MacOS.
@@ -1896,8 +1937,7 @@
     browser's help to see how you can print properly.
 
 <h5>For Mac</h5>
-- Use Safari for good printing experience. Use 'command P' to print, change
-orientation and scale to print it properly. If its a large course, its better to print on
+- Use Chrome or Firefox 'command P' to print, change orientation and scale to print it properly. If its a large course, its better to print on
 two pages and glue them togather to keep names readable.
 
 <h5>For Windows</h5>

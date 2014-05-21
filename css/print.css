@@ -26,6 +26,10 @@
         display: none;
     }
 
+    .seatwalla-seat[data-space='true'][data-pin='true'] .seatwalla-seat-container:before {
+        content: "";
+    }
+
     .seatwalla-first-name {
         /*font-size: 1em;*/
         white-space: nowrap;
@@ -60,6 +64,10 @@
 
     .pagoda-col.cell, .pagoda-col-header.cell {
         width: 20%;
+    }
+
+    .pagoda-cell[data-cell='-1'] {
+        visibility: hidden;
     }
 
     .pagoda-controls {
@@ -133,7 +141,7 @@
         -webkit-region-break-inside: avoid;
     }
 
-    .seatwalla-check {
+    .seatwalla-check, .seatwalla-pinall, .seatwalla-unpinall {
         display: none;
     }
 

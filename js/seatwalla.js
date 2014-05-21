@@ -14,7 +14,6 @@
         this.el = el;
         this.$el = $(el);
         this.init();
-
     };
 
     Seatwalla.prototype.defaults = {
@@ -35,18 +34,6 @@
             $(".seatwalla-help-content").hide();
         });
     }
-
-    // shim layer with setTimeout fallback
-    window.requestAnimFrame = (function() {
-        return  window.requestAnimationFrame ||
-                window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame ||
-                window.oRequestAnimationFrame ||
-                window.msRequestAnimationFrame ||
-                function(/* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
-                    window.setTimeout(callback, 1000 / 60);
-                };
-    })();
 
     Seatwalla.prototype.readFile = function() {
         var seatwalla = this;
@@ -113,7 +100,6 @@
                 options.studentData = data;
                 options.originalData = _.clone(data);
                 options.totalStudent = data.length;
-
             }
         };
 
@@ -178,7 +164,6 @@
                 seatwalla.moveAllRowsToStart("UP");
             }
         }
-
     };
 
     Seatwalla.prototype.moveAllRowsToStart = function(direction) {
@@ -276,19 +261,13 @@
 
     Seatwalla.prototype.addSeatContainer = function(data) {
 
-        var $seatTemplate = _.template("<div class='seatwalla-seat' draggable='<%=!student.pin%>' data-index='<%=index%>'  data-num='<%=student.num%>' data-age='<%=student.age%>' data-label='<%=seat.label%>' data-space='<%=space%>' data-pin='<%=student.pin%>' data-room='<%=student.room%>'>" +
+        var $seatTemplate = _.template("<div class='seatwalla-seat' draggable='<%=!student.pin%>' data-index='<%=index%>'" +
+                                       "data-num='<%=student.num%>' data-age='<%=student.age%>' data-label='<%=seat.label%>'" +
+                                       "data-space='<%=space%>' data-pin='<%=student.pin%>' data-room='<%=student.room%>'>" +
                                        "</div>");
 
         var $seatContainer = $($seatTemplate(data));
         return $seatContainer;
-    };
-
-    Seatwalla.prototype.addAfter = function(index) {
-
-    };
-    Seatwalla.prototype.addBefore = function(index) {
-    };
-    Seatwalla.prototype.addAbove = function(index) {
     };
 
     Seatwalla.prototype.addSpace = function($hall, index, direction, first) {
@@ -347,10 +326,6 @@
                 }
                 $seat = seatwalla.addStudentToGrid(data.student, data.index, true, null, $element, "after");//seatwalla.addSeat($hall, data, null, $element, "after");
             }
-            //data.seat = seatwalla.getSeatInfoFromIndex(index);
-            // seatwalla.addEvents($(".seatwalla-hall"), $seat, data);
-            //seatwalla.placeEditTools($seat);
-
         }
         else if (direction === "top") {
             var newIndex = parseInt(index) + parseInt(options.seatInRow);
@@ -488,7 +463,6 @@
         var $hall = $(".seatwalla-hall");
         seatwalla.addEvents($hall, $seatContainer, data);
         seatwalla.placeEditTools($seatContainer);
-        seatwalla.positionAddStudentTool();
     };
 
     Seatwalla.prototype.addEvents = function($hall, $seat, data) {
@@ -579,6 +553,7 @@
             var $toSeat = seatwalla.getMovableSeatAt(toIndex);
             if ($fromSeat.length > 0 && $toSeat.length > 0) {
                 seatwalla.insert(fromIndex, toIndex);
+
             }
             else {
                 if ($toSeat.length == 0) {
@@ -637,6 +612,7 @@
             var r = confirm("Are you sure, you want to delete the student");
             if (r == true) {
                 seatwalla.deleteSeat(event);
+
             }
         });
         $pin.click(function(event) {
@@ -803,23 +779,12 @@
 
         seatwalla.addEvents($(".seatwalla-hall"), $seatObj, data);
         seatwalla.placeEditTools($seatObj);
+
+        var cell = $seatObj.find(".seatwalla-cell").text();
+        if (cell && cell.length > 0) {
+            seatwalla.updatePagodaSeat(index, id, cell);
+        }
         return $seatObj;
-    };
-
-    Seatwalla.prototype.positionAddStudentTool = function() {
-        /*var seatwalla = this;
-         var options = seatwalla.options;
-         var lastSeatIndex = seatwalla.getLastIndex();
-         var addToolIndex = parseInt(lastSeatIndex) + 1;
-         var seatInfo = seatwalla.getSeatInfoFromIndex(addToolIndex);
-         $(".seatwalla-add-student").css({
-         top: seatInfo.top + "px",
-         left: seatInfo.left + "%",
-         width: options.seatWidth + "px",
-         height: options.seatHeight + "px"
-         });
-
-         $(".seatwalla-add-student").attr("data-index", addToolIndex);*/
     };
 
     Seatwalla.prototype.placeEditTools = function($seat) {
@@ -860,6 +825,18 @@
         var $seat = target.closest(".seatwalla-seat");
         var deletedIndex = parseInt($seat.attr("data-index"));
         console.log("Deleted  " + deletedIndex);
+
+        var label = $seat.attr("data-label");
+        var cell = parseInt($seat.find(".seatwalla-cell").text().split(" ")[0]);
+
+        var $cell = $(".pagoda-shared-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
+        if ($cell.length == 0) {
+            $cell = $(".pagoda-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
+        }
+
+        if ($cell.length > 0) {
+            options.$pagoda.cancelAssignment($cell);
+        }
         $seat.remove();
 
         var lastIndex = seatwalla.getLastIndex();
@@ -1057,6 +1034,7 @@
         var seatwalla = this;
         element.attr("data-label", seatInfo.label);
         element.attr("data-index", seatInfo.index);
+        var cell = element.find(".seatwalla-cell").text();
         var $seatLabel = element.find(".seatwalla-label");
         if (seatwalla.options.seatStyle == "Number") {
             seatInfo.label = seatInfo.index + 1;
@@ -1066,6 +1044,7 @@
         var $cell = element.find(".seatwalla-cell");
         if ($cell.length > 0) {
             $cell.attr("data-label", seatInfo.label);
+            seatwalla.updatePagodaSeat(seatInfo.index, seatInfo.label, cell);
         }
     };
 
@@ -1078,6 +1057,7 @@
         }
         else if (options.gender == "male") {
             return seatwalla.decreaseIndex(index, sourceIndex, check);
+            s
         }
     };
 
@@ -1172,26 +1152,61 @@
         //seatwalla.drawChart(seatwalla.options);
     };
 
-    Seatwalla.prototype.assignCells = function($pagoda) {
+    Seatwalla.prototype.assignCells = function($pagoda, init) {
 
         var seatwalla = this;
         var options = seatwalla.options;
-        seatwalla.extractData(false);
+        options.$pagoda = $pagoda;
+        var data = seatwalla.extractData(false, true);
+        var pOptions = _.extend(options, {studentData: data});
+
         //_.extend(options, seatwalla.options);
         $(".seatwalla-container").hide();
         $(".pagoda-container").show();
         $(".seatwalla-hall").hide();
         options.pagodaData = pagodaData;
 
-        $pagoda.initData(options);
+        if (init) {
+            $pagoda.initData(pOptions);
+        }
+        else {
+            $pagoda.updateStudentList(pOptions);
+        }
+    };
 
+    Seatwalla.prototype.updatePagodaSeat = function(index, label, cell) {
+        var seatwalla = this;
+        var $content = null;
+        cell = cell.split(" ")[0];
+
+        var student = seatwalla.getStudentFromIndex(index);
+        var $cell = $(".pagoda-shared-cell-content[data-cell='" + cell + "']");
+
+        if ($cell.length == 0) {
+            $cell = $(".pagoda-cell-content[data-cell='" + cell + "']");
+            $cell.attr("data-label", label);
+            $cell.find(".seatwalla-label").text(label);
+        }
+        else if ($cell.length > 1){
+
+            for (var i = 0; i < $cell.length; i++) {
+                var $currentCell = $($cell[i]);
+
+                if (($currentCell.find(".pagodawalla-first-name").text() == student.firstName) &&
+                    ($currentCell.find(".pagodawalla-second-name").text() == student.secondName)) {
+                    $currentCell.attr("data-label", student.label);
+                    $currentCell.attr("data-label", label);
+                    $currentCell.find(".seatwalla-label").text(label);
+                    return;
+                }
+            }
+        }
     };
 
     Seatwalla.prototype.check = function() {
         var seatwalla = this;
-        seatwalla.extractData();
+        var studentData = seatwalla.extractData(false);
         var options = seatwalla.options;
-        var studentData = options.studentData;
         var originalData = options.originalData;
 
         var checkList = [];
@@ -1264,7 +1279,7 @@
         }
     };
 
-    Seatwalla.prototype.extractData = function(overwriteOptions) {
+    Seatwalla.prototype.extractData = function(overwriteOptions, studentsOnly) {
         var seatwalla = this;
         var lastIndex = seatwalla.getLastIndex();
         var data = "SAVED";
@@ -1272,8 +1287,17 @@
 
         for (var i = 0; i <= lastIndex; i++) {
             var student = seatwalla.getStudentFromIndex(i);
+
             student.index = i;
-            dataArr[i] = student;
+
+            if (studentsOnly) {
+                if (student.firstName !== null) {
+                    dataArr.push(student);
+                }
+            }
+            else {
+                dataArr[i] = student;
+            }
 
             var studentStr = student.name + "," + student.age + "," + student.num + "," + student.text + "," +
                              student.space +
@@ -1310,11 +1334,15 @@
         if (overwriteOptions) {
             seatwalla.options = options;
         }
-        else {//just overwrite the latest student data
-            seatwalla.options.studentData = dataArr;
-        }
 
-        return data;
+        return dataArr;
+    }
+    ;
+
+    Seatwalla.prototype.updateStudentList = function() {
+        var seatwalla = this;
+        seatwalla.extractData(false, true);
+
     };
 
     Seatwalla.prototype.getStudentFromIndex = function(index) {
@@ -1368,6 +1396,7 @@
                 student.room = $element.attr("data-room"); //$element.find(".seatwalla-seat-room-edit").attr("data-label");
             }
             else {
+
                 student.firstName = null;
                 student.secondName = null;
                 student.age = "";
@@ -1494,7 +1523,6 @@
 
             $(".seatwalla-edit-container").remove();
 
-
             seatwalla.updateSeat({"student": student, "seat": seatInfo, "index": index, "space": false}, $seat);
         });
 
@@ -1506,7 +1534,8 @@
     Seatwalla.prototype.updateNote = function($seat, student) {
         if (student.text && student.text.length > 0) {
             $seat.find(".seatwalla-note").css("display", "inline-block");
-        } else {
+        }
+        else {
             $seat.find(".seatwalla-note").css("display", "none");
         }
     };
@@ -1565,6 +1594,14 @@
 
     };
 
+    Seatwalla.prototype.pinAll = function(option) {
+        $(".seatwalla-seat[data-pin='false']").find(".seatwalla-pin").click();
+    };
+
+    Seatwalla.prototype.unpinAll = function(option) {
+        $(".seatwalla-seat[data-pin='true']").find(".seatwalla-pin").click();
+    };
+
     var allSeats = $(".seatwalla-seat");
 
     _.each(allSeats, function($seat) {
@@ -1588,10 +1625,16 @@
             seatwalla.drawChart(options);
         }
         else if (method == "assignCells") {
-            seatwalla.assignCells(options.$pagoda);
+            seatwalla.assignCells(options.$pagoda, options.init);
         }
         else if (method == "check") {
             seatwalla.check(options);
+        }
+        else if (method == "pinAll") {
+            seatwalla.pinAll(options);
+        }
+        else if (method == "unpinAll") {
+            seatwalla.unpinAll(options);
         }
     };
 

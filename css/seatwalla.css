@@ -104,6 +104,10 @@ a {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 .seatwalla-seat-dragstart {
@@ -125,8 +129,16 @@ a {
     background-color: #b0bdfc;
 }
 
-.seatwalla-seat-container[data-space=false]:hover {
+.seatwalla-seat-container[data-space='false']:hover {
     background-color: blue;
+}
+
+.seatwalla-seat[data-space='true'][data-pin='true'] .seatwalla-seat-container:before {
+    content: "Fixed";
+    color: #aaa;
+    font-weight: bold;
+    text-shadow: 1px 1px #FFF, -1px -1px #333;
+    font-size: 12px;
 }
 
 .seatwalla-seat-old {
@@ -173,7 +185,7 @@ a {
 }
 
 .seatwalla-cell, .seatwalla-label {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: bold;
     display: inline-block;
     width: 45%;
@@ -184,8 +196,9 @@ a {
 }
 
 .seatwalla-cell {
-    right: 2px;
-    font-size: 12px;
+    position: absolute;
+    top: 58px;
+    left: 50px;
 }
 
 .seatwalla-second-name {
@@ -261,16 +274,8 @@ a {
     background-color: #adaeb3;
 }
 
-.seatwalla-seat-pin:after {
-    background-color: transparent;
-    font-size: 24px;
-    color: #ddd;
-    text-shadow: 1px 1px #FFF, -1px -1px #333;
-    font-size: 14px;
+.seatwalla-seat[data-space='false'][data-pin='true'] .seatwalla-content {
     text-decoration: underline;
-    top: 36%;
-    left: 50%;
-    position: absolute;
 }
 
 .seatwalla-edit {
@@ -504,7 +509,7 @@ a {
     vertical-align: top;
 }
 
-.pagoda-cell[data-cellno='-1'] {
+.pagoda-cell[data-cell='-1'] {
     visibility: hidden;
 }
 
@@ -559,7 +564,7 @@ a {
     white-space: normal;
 }
 
-.pagodawalla-cellNo {
+.pagodawalla-cell {
     position: absolute;
     top: 2px;
     right: 2px;
@@ -573,18 +578,6 @@ a {
     right: 2px;
     top: 20px;
     z-index: 100;
-}
-
-.seatwalla-cellNo {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-}
-
-.seatwalla-cellNo {
-    position: absolute;
-    top: 2px;
-    left: 6px;
 }
 
 .seatwalla-notes-detail {
@@ -733,5 +726,9 @@ td {
 .seatwalla-check-student-info {
     font-size: 18px;
     line-height: 22px;
+    margin-bottom: 25px;
 }
 
+.hidden {
+    display: none;
+}

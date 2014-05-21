@@ -1,0 +1,15 @@
+Features
+
+Check - informs about deleted student, or young student in the aisle.
+
+Pin all - pin all the cushions
+
+Unpin all - un pin all the cushions
+
+Assign Pagoda
+
+Show Chit
+
+Show Table
+
+Supports CVC, SVC, VMC Pagoda.

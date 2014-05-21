@@ -37,11 +37,11 @@
         cellHeight: 120,
         pagodaSeatWidth: 150,
         widthUnits: "px",
-        pagodaEmptyCellTemplate: _.template("<div class='pagoda-cell' data-cellNo='<%=cellNo%>' data-label='<%=student.label%>'>" +
-                                            "<div class='pagoda-cell-content'>" +
+        pagodaEmptyCellTemplate: _.template("<div class='pagoda-cell' data-cell='<%=cell%>' data-label='<%=student.label%>'>" +
+                                            "<div class='pagoda-cell-content'  data-cell='<%=cell%>' data-label='<%=student.label%>'>" +
                                             "<div class='seatwalla-delete'><i class='icon-kub-remove'></i></div>" +
-                                            "<%if(cellNo != -1) {%>" +
-                                            "<span class='pagodawalla-cellNo'><%=cellNo%></span>" +
+                                            "<%if(cell != -1) {%>" +
+                                            "<span class='pagodawalla-cell'><%=cell%></span>" +
                                             "<%}%>" +
                                             "<div class='pagoda-cell-content-data'>" +
                                             "<div class='pagodawalla-first-name'><%=student.firstName%></div>" +
@@ -69,10 +69,10 @@
         pagodaStudentListItemTemplate: _.template("<div class='pagoda-student-list-item' draggable='true' data-label='<%=student.label%>'><%=student.firstName%></div>"
         ),
 
-        pagodaSharedCellTemplate: _.template("<div class='pagoda-shared-cell-content' data-label='<%=student.label%>'>" +
+        pagodaSharedCellTemplate: _.template("<div class='pagoda-shared-cell-content' data-cell='<%=cell%>' data-label='<%=student.label%>'>" +
                                              "<div class='seatwalla-delete'><i class='icon-kub-remove'></i></div>" +
-                                             "<%if(cellNo != -1) {%>" +
-                                             "<span class='pagodawalla-cellNo'><%=cellNo%></span>" +
+                                             "<%if(cell != -1) {%>" +
+                                             "<span class='pagodawalla-cell'><%=cell%></span>" +
                                              "<span class='pagodawalla-time'><%=student.time%></span>" +
                                              "<%}%>" +
                                              "<div class='pagoda-cell-content-data'>" +
@@ -120,15 +120,15 @@
         chitTemplate: _.template("<div class='pagoda-chit new'>" +
                                  "<div class='pagoda-chit-student-name'><%=student.firstName%>&nbsp;<%=student.secondName%>,&nbsp;&nbsp;<%=student.label%></div>" +
                                  "<%if(student.share == 'AM') {%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b> on all days in the morning from<br><b>4:30-6:30 AM</b>  & <b>10-11 AM</b></div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the morning from<br><b>4:30-6:30 AM</b>  & <b>10-11 AM</b></div>" +
                                  " <% } else if (student.share == 'PM'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b> on all days in the afternoon from <br><b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the afternoon from <br><b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% } else if (student.share == '67'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b> on days 6 and 7 from <br><b>4:30 - 6:30 AM</b>, <b>10-11 AM</b>, <b>1:00-2:20 PM</b> & <b>4-5 PM</b></div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on days 6 and 7 from <br><b>4:30 - 6:30 AM</b>, <b>10-11 AM</b>, <b>1:00-2:20 PM</b> & <b>4-5 PM</b></div>" +
                                  "<% } else if (student.share == '89'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b> on day 8 & 9 from<br><b>4:30 - 6:30 AM</b>,  <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on day 8 & 9 from<br><b>4:30 - 6:30 AM</b>,  <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% } else {%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b> on all days from<br><b><b>4:30 - 6:30 AM</b>, <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days from<br><b><b>4:30 - 6:30 AM</b>, <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% }%>" +
                                  "<ul>" +
                                  "<li class='pagoda-chit-instr'><b>If you do not wish to use your cell, please inform the manager</b></li>" +
@@ -141,7 +141,7 @@
 
         chitTemplateOld: _.template("<div class='pagoda-chit old'>" +
                                     "<div class='pagoda-chit-student-name'><%=student.firstName%>&nbsp;<%=student.secondName%>,&nbsp;&nbsp;<%=student.label%></div>" +
-                                    "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cellNo%></b></div>" +
+                                    "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b></div>" +
                                     "<ul>" +
                                     "<li class='pagoda-chit-instr'><b>If you do not wish to use your cell, please inform the manager</b></li>" +
                                     "<li class='pagoda-chit-instr'><b>Please contact manager if you can't find the cell</b></li>" +
@@ -177,7 +177,7 @@
                                   "</div>" +
 
                                   "<div class='pagoda-col cell'>" +
-                                  "<%=student.student.cellNo%>" +
+                                  "<%=student.student.cell%>" +
                                   "</div>" +
 
                                   "<div class='pagoda-col'>" +
@@ -225,6 +225,34 @@
         $(".pagoda-center-select").append($pagodaCenterList);
     };
 
+    Pagodawalla.prototype.unassignedStudents = function() {
+        var pagodawalla = this;
+        var options = pagodawalla.options;
+
+        var studentsNotAssigned = _.filter(options.studentData, function(student) {
+            if (student.cell == "") {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+
+        return studentsNotAssigned;
+    };
+
+    Pagodawalla.prototype.findCellForStudent = function(firstName) {
+        var pagodawalla = this;
+        var cell = $(".pagodawalla-first-name:contains('" + firstName + "')");
+        return cell;
+    };
+
+    Pagodawalla.prototype.updateSeat = function(student) {
+        var pagodawalla = this;
+        var cell = $(".pagodawalla-first-name:contains('" + firstName + "')");
+        return cell;
+    };
+
     Pagodawalla.prototype.initData = function(inoptions) {
         var pagodawalla = this;
         var options = pagodawalla.options;
@@ -234,8 +262,8 @@
         $(".pagoda-chart").empty();
 
         $(".pagoda-student-list").empty();
-        var $studentContainer = $(options.pagodaStudentListTemplate({students: options.studentData}));
-        $(".pagoda-student-list").append($studentContainer);
+
+        pagodawalla.updateStudentList();
 
         var students = $(".pagoda-student-list-item");
 
@@ -245,34 +273,37 @@
         pagodawalla.showFloor("3");
 
         var selectedStudents = [];
+
+        pagodawalla.updateStudentList(inoptions);
         var studentName = $(".pagoda-student-search-text").val();
 
         $(".pagoda-student-search-text").keyup(function(event) {
             var studentName = $(".pagoda-student-search-text").val();
+            options = pagodawalla.options;
+            var studentsNotAssigned = pagodawalla.unassignedStudents();
             if (studentName) {
-                selectedStudents = _.filter(options.studentData, function(student) {
+                selectedStudents = _.filter(studentsNotAssigned, function(student) {
 
-                    if ((student.cellNo.length == 0) && student.firstName &&
-                        student.firstName.toLowerCase().indexOf(studentName.toLowerCase()) >= 0) {
+                    console.log(studentName + " -- student in list  ----" + student.firstName + " , cell, " +
+                                student.cell);
+                    var cellForStudent = pagodawalla.findCellForStudent(student.firstName);
+
+                    if ((cellForStudent.length == 0) &&
+                        (student.firstName) &&
+                        (student.firstName.toLowerCase().indexOf(studentName.toLowerCase()) != -1)) {
                         return true;
                     }
                     else {
                         return false;
                     }
                 });
+
+                pagodawalla.updateStudentList(inoptions, selectedStudents);
             }
             else {
-                selectedStudents = options.studentData;
+                selectedStudents = studentsNotAssigned;
             }
-            $(".pagoda-student-list").empty();
-            var $studentContainer = $(options.pagodaStudentListTemplate({students: selectedStudents}));
-            $(".pagoda-student-list").append($studentContainer);
-            students = $(".pagoda-student-list-item");
-            _.each(students, function(student, index) {
-                var $student = $(student);
-                pagodawalla.bindStudentEvent($student);
 
-            });
         });
 
         _.each(students, function(student, index) {
@@ -280,8 +311,7 @@
             pagodawalla.bindStudentEvent($student);
 
         });
-    }
-    ;
+    };
 
     Pagodawalla.prototype.bindStudentEvent = function($student) {
         $student.bind("dragstart", function(event) {
@@ -304,7 +334,7 @@
         var students = options.studentData;
         pagodawalla.assignedStudent = [];
         _.each(students, function(student, index) {
-            if (student.cellNo) {
+            if (student.cell) {
                 pagodawalla.assignedStudent.push(student);
                 var $student = $(".pagoda-student-list-item[data-label='" + student.label + "']");
                 $student.remove();
@@ -377,19 +407,20 @@
         $pagodaFloor = $(".pagoda-floor[data-floor='" + floorNo + "']");
 
         var cellWidth = 100 / columns; //$(".pagoda-chart").width() / columns;
+        options.cellWidth = cellWidth;
         var student = {};
         student.firstName = "";
         student.secondName = "";
         student.age = "";
         student.text = "";
-        student.cellNo = "";
+        student.cell = "";
         //var imgSrc = options.imgSrc;
 
         for (var r = 0; r < rows; r++) {
             for (var c = 0; c < columns; c++) {
-                var cellNo = parseInt(cells[r][c]);
+                var cell = (cells[r][c]);
 
-                var $cell = $(options.pagodaEmptyCellTemplate({cellNo: cellNo, student: student}));
+                var $cell = $(options.pagodaEmptyCellTemplate({cell: cell, student: student}));
                 $cell.css({ width: cellWidth + "%", height: options.cellHeight + "px"});
 
                 $pagodaFloor.append($cell);
@@ -421,10 +452,10 @@
             var $pagodaCell = target.closest(".pagoda-cell");
             var isShared = $pagodaCell.hasClass("pagoda-shared-cell");
             if (!isShared) {
-                var cellNo = parseInt($pagodaCell.attr("data-cellNo"));
+                var cell = $pagodaCell.attr("data-cell");//parseInt($pagodaCell.attr("data-cell"));
                 var cellLabel = $pagodaCell.attr("data-label");
-                //if (cellNo != -1 && cellLabel.length == 0) {
-                student.cellNo = cellNo;
+                //if (cell != -1 && cellLabel.length == 0) {
+                student.cell = cell;
                 pagodawalla.updateCell(student);
                 var $student = $(".pagoda-student-list-item[data-label='" + student.label + "']");
                 $student.remove();
@@ -455,80 +486,95 @@
     Pagodawalla.prototype.removeStudent = function(event) {
         var pagodawalla = this;
 
-        var r = confirm("Are you sure, you want to remove student from the cell?");
+        var r = confirm("Are you sure, you want to cancel the cell assignment? Note: Student will not get removed from the hall or pagoda list.");
         if (r == true) {
 
             var $target = $(event.target);
-            var $cell = $target.closest(".pagoda-cell");
-            var width = $cell.outerWidth();
-
-            var options = pagodawalla.options;
-
-            var label = $cell.attr("data-label");
-            var isShared = $cell.hasClass("pagoda-shared-cell");
-            var cellNo = $cell.attr("data-cellNo");
-
-            if (label.length > 0) {
-                var student;
-                if (isShared) {
-                    $cellToDelete = $target.closest(".pagoda-shared-cell");
-                    var deleteLabel = $cellToDelete.attr("data-label");
-
-                    var deletedStudent = pagodawalla.getStudentWithLabel(deleteLabel);
-                    console.log("delete " + deletedStudent.firstName);
-
-                    var sharedCells = $cell.find(".pagoda-shared-cell-content");
-                    if (sharedCells.length == 2) {
-                        var label0 = $(sharedCells[0]).attr("data-label");
-                        var label1 = $(sharedCells[1]).attr("data-label");
-                        var label = label1;
-                        if (label1 == deleteLabel) {
-                            label = label0;
-                        }
-                        student = pagodawalla.getStudentWithLabel(label);
-
-                        $cell = $cell.replaceWith($(options.pagodaEmptyCellTemplate({cellNo: cellNo, student: student})));
-                        $cell = $(".pagoda-cell[data-label='" + label + "']");
-                        $cell.css({ width: width, height: options.cellHeight + "px"});
-                        pagodawalla.bindCellEvents($cell);
-                        console.log("keep " + student.firstName);
-
-                        var $studentItem = $(options.pagodaStudentListItemTemplate({student: deletedStudent}));
-                        pagodawalla.bindStudentEvent($studentItem);
-                        $(".pagoda-student-list").prepend($studentItem);
-
-                    }
-                }
-                else {
-                    student = pagodawalla.getStudentWithLabel(label);
-                    student.cellNo = "";
-
-                    $cell.find(".pagodawalla-first-name").text("");
-                    $cell.find(".pagodawalla-second-name").text("");
-                    $cell.find(".seatwalla-label").text("");
-                    $cell.find(".seatwalla-seat-text").text("");
-                    $cell.attr("data-label", "");
-
-                    var $seatCell = $(".seatwalla-cell[data-label='" + student.label + "']");
-                    $seatCell.text("");
-
-                    var $studentItem = $(options.pagodaStudentListItemTemplate({student: student}));
-                    $(".pagoda-student-list").prepend($studentItem);
-                    console.log("added  " + student.firstName + "  to student list");
-                    pagodawalla.bindStudentEvent($studentItem);
-                }
-
-                pagodawalla.removeFromPrintList(student);
-                pagodawalla.removeFromMasterList(student);
+            var $cell = $target.closest(".pagoda-shared-cell-content");
+            if ($cell.length == 0) {
+                $cell = $target.closest(".pagoda-cell-content");
             }
-        }
 
+            pagodawalla.cancelAssignment($cell);
+        }
     };
+
+    Pagodawalla.prototype.cancelAssignment = function($cell) {
+        var pagodawalla = this;
+        var options = pagodawalla.options;
+        var student = null;
+        var $pagodaCell = $cell.closest(".pagoda-cell");
+
+        var label = $cell.attr("data-label");
+        var isShared = $pagodaCell.hasClass("pagoda-shared-cell");
+        var cell = $pagodaCell.attr("data-cell");
+        var width = $pagodaCell.outerWidth();
+
+        if (label.length > 0) {
+            var student;
+            if (isShared) {
+                $cellToDelete = $cell; //$target.closest(".pagoda-shared-cell");
+                var deleteLabel = $cellToDelete.attr("data-label");
+
+                var deletedStudent = pagodawalla.getStudentWithLabel(deleteLabel);
+                console.log("delete " + deletedStudent.firstName);
+
+
+                var sharedCells = $pagodaCell.find(".pagoda-shared-cell-content");
+                if (sharedCells.length == 2) {
+                    var label0 = $(sharedCells[0]).attr("data-label");
+                    var label1 = $(sharedCells[1]).attr("data-label");
+                    var label = label1;
+                    if (label1 == deleteLabel) {
+                        label = label0;
+                    }
+
+                    student = pagodawalla.getStudentWithLabel(label);
+
+                    var $pagodaCell = $cell.closest(".pagoda-cell");
+                    $cell = $pagodaCell.replaceWith($(options.pagodaEmptyCellTemplate({cell: cell, student: student})));
+                    $cell = $(".pagoda-cell[data-label='" + label + "']");
+                    $cell.css({ width: options.cellWidth + "%", height: options.cellHeight + "px"});
+                    pagodawalla.bindCellEvents($cell);
+                    console.log("keep " + student.firstName);
+
+                    var $studentItem = $(options.pagodaStudentListItemTemplate({student: deletedStudent}));
+                    pagodawalla.bindStudentEvent($studentItem);
+                    $(".pagoda-student-list").prepend($studentItem);
+                }
+            }
+            else {
+                student = pagodawalla.getStudentWithLabel(label);
+                student.cell = "";
+
+                $cell.find(".pagodawalla-first-name").text("");
+                $cell.find(".pagodawalla-second-name").text("");
+                $cell.find(".seatwalla-label").text("");
+                $cell.find(".seatwalla-seat-text").text("");
+                $cell.attr("data-label", "");
+
+                var $pagodaCell = $cell.closest(".pagoda-cell");
+                $pagodaCell.attr("data-label", "");
+
+                var $seatCell = $(".seatwalla-cell[data-label='" + student.label + "']");
+                $seatCell.text("");
+
+                var $studentItem = $(options.pagodaStudentListItemTemplate({student: student}));
+                $(".pagoda-student-list").prepend($studentItem);
+                console.log("added  " + student.firstName + "  to student list");
+                pagodawalla.bindStudentEvent($studentItem);
+            }
+
+            pagodawalla.removeFromPrintList(student);
+            pagodawalla.removeFromMasterList(student);
+        }
+    }
+    ;
 
     Pagodawalla.prototype.updateCell = function(student) {
         var pagodawalla = this;
         var options = pagodawalla.options;
-        var $pagodaCell = $(".pagoda-cell[data-cellNo='" + student.cellNo + "']");
+        var $pagodaCell = $(".pagoda-cell[data-cell='" + student.cell + "']");
         var label = $pagodaCell.attr("data-label");
         var existingStudent;
         if (label.length > 0) {
@@ -563,7 +609,7 @@
             }
 
             $(".pagoda-share-ok").bind("click", function() {
-                pagodawalla.shareCell(student.cellNo, existingStudent, student);
+                pagodawalla.shareCell(student.cell, existingStudent, student);
                 printList.push(student);
                 pagodawalla.addToMasterList(student);
                 $("body").find(".pagoda-shared-cell-questionaire").remove();
@@ -596,11 +642,12 @@
         else {
 
             $pagodaCell.attr("data-label", student.label);
+            $pagodaCell.find(".pagoda-cell-content").attr("data-label", student.label);
             $pagodaCell.find(".pagodawalla-first-name").text(student.firstName);
             $pagodaCell.find(".pagodawalla-second-name").text(student.secondName);
             $pagodaCell.find(".seatwalla-label").text(student.label);
             var $cell = $(".seatwalla-cell[data-label='" + student.label + "']");
-            $cell.text(student.cellNo);
+            $cell.text(student.cell);
             $cell.css("display", "inline-block");
             printList.push(student);
             pagodawalla.addToMasterList(student);
@@ -631,7 +678,8 @@
 
     Pagodawalla.prototype.removeFromPrintList = function(student) {
         printList = _.reject(printList, function(s) {
-            if (s.firstName == student.firstName && s.secondName == student.secondName && s.label == student.label) {
+            if (s.firstName == student.firstName && s.secondName == student.secondName &&
+                s.label == student.label) {
                 return true;
             }
         });
@@ -702,7 +750,7 @@
 
     Pagodawalla.prototype.isCellOccupied = function(student) {
         var pagodawalla = this;
-        var $pagodaCell = $(".pagoda-cell[data-cellNo='" + student.cellNo + "']");
+        var $pagodaCell = $(".pagoda-cell[data-cell='" + student.cell + "']");
         var label = $pagodaCell.attr("data-label");
         if (label && label.length > 0) {
             return true;
@@ -712,28 +760,28 @@
         }
     };
 
-    Pagodawalla.prototype.shareCell = function(cellNo, existingStudent, student) {
+    Pagodawalla.prototype.shareCell = function(cell, existingStudent, student) {
         var pagodawalla = this;
         var options = pagodawalla.options;
-        var $pagodaCell = $(".pagoda-cell[data-cellNo='" + student.cellNo + "']");
+        var $pagodaCell = $(".pagoda-cell[data-cell='" + student.cell + "']");
         $pagodaCell.empty();
         $pagodaCell.addClass("pagoda-shared-cell");
 
         existingStudent.time = timeMappings[existingStudent.share];
-        var $sharedCell = $(options.pagodaSharedCellTemplate({cellNo: cellNo, student: existingStudent}));
-        $sharedCell.css({ width: options.cellWidth + "%"});
+        var $sharedCell = $(options.pagodaSharedCellTemplate({cell: cell, student: existingStudent}));
+       // $sharedCell.css({ width: options.cellWidth + "%"});
         $pagodaCell.append($sharedCell);
 
         var $seat = $(".seatwalla-cell[data-label='" + existingStudent.label + "']");
-        $seat.text(existingStudent.cellNo + " " + existingStudent.time);
+        $seat.text(existingStudent.cell + " " + existingStudent.time);
 
         $sharedCell.find(".seatwalla-delete").click(function(event) {
             pagodawalla.removeStudent(event);
         });
 
         student.time = timeMappings[student.share];
-        var $cell = $(options.pagodaSharedCellTemplate({cellNo: cellNo, student: student}));
-        $cell.css({ width: options.cellWidth + "%"});
+        var $cell = $(options.pagodaSharedCellTemplate({cell: cell, student: student}));
+       // $cell.css({ width: options.cellWidth + "%"});
 
         if (student.share == "AM" || student.share == "67") {
             $pagodaCell.prepend($cell);
@@ -743,7 +791,7 @@
         }
 
         var $seat = $(".seatwalla-cell[data-label='" + student.label + "']");
-        $seat.text(student.cellNo + " " + student.time);
+        $seat.text(student.cell + " " + student.time);
         $seat.css("display", "inline-block");
 
         $cell.find(".seatwalla-delete").click(function(event) {
@@ -760,6 +808,26 @@
         printList = [];
         var $chitView = $(".pagoda-chit-print");
         $chitView.empty();
+    };
+
+    Pagodawalla.prototype.updateStudentList = function(inoptions, selectedStudents) {
+        var pagodawalla = this;
+        var studentsNotAssigned = selectedStudents;
+        var options = pagodawalla.options;
+        if (!studentsNotAssigned) {
+            if (inoptions) {
+                pagodawalla.options.studentData = inoptions.studentData;
+            }
+            studentsNotAssigned = pagodawalla.unassignedStudents();
+        }
+
+        var $studentContainer = $(options.pagodaStudentListTemplate({students: studentsNotAssigned}));
+        $(".pagoda-student-list").empty().append($studentContainer);
+        students = $(".pagoda-student-list-item");
+        _.each(students, function(student, index) {
+            var $student = $(student);
+            pagodawalla.bindStudentEvent($student);
+        });
     };
 
     Pagodawalla.prototype.execute = function(method, options) {
@@ -785,6 +853,12 @@
         }
         else if (method == "clearPrintList") {
             pagodawalla.clearPrintList();
+        }
+        else if (method == "updateStudentList") {
+            pagodawalla.updateStudentList(options);
+        }
+        else if (method == "cancelAssignment") {
+            pagodawalla.cancelAssignment(options.$cell);
         }
     };
 
