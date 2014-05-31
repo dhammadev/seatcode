@@ -1,5 +1,14 @@
 Features
 
+2014_05_28
+
+Fixed finding students in the pagoda list which did not show all the students once search string entered.
+
+Check will work in saved files as well.
+
+
+
+2014_05_25
 Check - informs about deleted student, or young student in the aisle.
 
 Pin all - pin all the cushions

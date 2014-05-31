@@ -211,6 +211,8 @@
         $(".pagoda-help-hide").click(function() {
             $(".pagoda-help-content").hide();
         });
+
+
         //pagodawalla.showStudentList();
 
     };
@@ -298,11 +300,13 @@
                     }
                 });
 
-                pagodawalla.updateStudentList(inoptions, selectedStudents);
+
             }
             else {
                 selectedStudents = studentsNotAssigned;
             }
+
+            pagodawalla.updateStudentList(inoptions, selectedStudents);
 
         });
 
@@ -356,6 +360,11 @@
 
         var pagodaD = pagodaObject[center][gender];
 
+        //update the floors in the selection list
+        var numFloors = pagodaObject[center][gender];
+        if (_.size(numFloors) == 2) {
+            $(".pagoda-levels-select option[value='2']").remove();
+        }
         _.each(pagodaD, function(floor, key) {
             pagodawalla.drawFloor(key, floor);
         });
@@ -364,6 +373,9 @@
 
     Pagodawalla.prototype.showFloor = function(floorNo) {
         var pagodawalla = this;
+
+
+
 
         if (floorNo == "3") {
             $(".pagoda-floor").show();

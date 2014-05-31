@@ -198,6 +198,10 @@
 
     Seatwalla.prototype.chopName = function(data, name) {
         var noQuoteName = name;
+        var quotes = noQuoteName.split('"');
+        if (quotes.length > 0 && quotes[1]) {
+            noQuoteName = quotes[1];
+        }
         if (name[0] == "\"") {
             noQuoteName = name.substring(1, name.length - 1);
         }
@@ -1205,16 +1209,16 @@
 
     Seatwalla.prototype.check = function() {
         var seatwalla = this;
-        var studentData = seatwalla.extractData(false);
+        var studentData = seatwalla.extractData(false, true);
+
+        var totalStudents = studentData.length;
+
         var options = seatwalla.options;
         var originalData = options.originalData;
 
         var checkList = [];
 
-        if (!originalData) {
-            return;
-        }
-        else {
+        if (originalData) {
 
             var missingStudent = [];
 
@@ -1235,6 +1239,7 @@
             });
         }
 
+        var oldStudents = 0; newStudents = 0;
         _.each(studentData, function(student) {
             var numCols = options.seatInRow;
             var mode = student.index % numCols;
@@ -1244,14 +1249,24 @@
                     checkList.push(student);
                 }
             }
+
+
+            if (student.num && student.num > 0) {
+                oldStudents++;
+            } else {
+                newStudents++;
+            }
         });
 
         var checkTemplate = _.template("<div class='seatwalla-check-container'>" +
                                        "<div class='seatwalla-delete-check'><i class='icon-kub-remove'></i></div>" +
+                                       "<div class='seatwalla-check-student-info seatwalla-stat-total'>Total Students: <%=totalStudents%>     </div>" +
+                                       "<div class='seatwalla-check-student-info seatwalla-stat-old'>Old students: <%=oldStudents%>    </div>" +
+                                       "<div class='seatwalla-check-student-info seatwalla-stat-new'>New Students: <%=newStudents%>    </div>" +
                                        "<%_.each(checkList, function(student){%>" +
                                        "<% if (student.reason == 'missing') {%>" +
                                        "<div class='seatwalla-check-student-info'>" +
-                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and is <%=student.age%> years old is missing." +
+                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and is <%=student.age%> years old is removed." +
                                        "</div>" +
                                        "<% } else if (student.reason == 'young') {%> " +
                                        "<div class='seatwalla-check-student-info'>" +
@@ -1261,7 +1276,7 @@
                                        "</div>"
         );
 
-        var $check = $(checkTemplate({checkList: checkList}));
+        var $check = $(checkTemplate({checkList: checkList, totalStudents: totalStudents, oldStudents: oldStudents, newStudents: newStudents}));
         $check.find(".seatwalla-delete-check").on("click", function(event) {
             $check.remove();
         });
@@ -1270,8 +1285,7 @@
     };
 
     Seatwalla.prototype.isSame = function(student1, student2) {
-        if (student1.firstName == student2.firstName && student1.secondName == student2.secondName
-            && student1.num == student2.num) {
+        if (student1.firstName == student2.firstName && student1.secondName == student2.secondName) {
             return true;
         }
         else {
@@ -1619,7 +1633,6 @@
         var seatwalla = this;
         if (method == "readFile") {
             seatwalla.readFile(options);
-
         }
         else if (method == "showChart") {
             seatwalla.drawChart(options);
