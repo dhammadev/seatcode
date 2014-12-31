@@ -11,7 +11,22 @@ a {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+}
 
+button {
+    border-radius: 5px;
+    padding: 3px 5px 3px 5px !important;
+    display: inline-block;
+    cursor: pointer;
+    background: #D4D0C8;
+    border: 1px outset darkgray;
+    font-size: 14px;
+}
+
+input {
+    border: 1px solid #ccc;
+    text-shadow: none;
+    text-align: start;
 }
 
 .seatwalla-container {
@@ -606,11 +621,14 @@ a {
 
 .seatwalla-seat-room-edit {
     background-color: inherit;
-    margin-right: 2px;
     display: inline-block;
-    width: 100%;
     font-size: 12px;
     font-weight: bold;
+    width: calc(100% - 4px);
+    height: 20px;
+    text-shadow: none;
+    border-radius: 4px;
+    border: 2px solid gray;
 }
 
 .pagoda-student-search {
@@ -734,4 +752,12 @@ td {
 
 .hidden {
     display: none;
+}
+
+.seatwalla-seat-container-flip {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
 }

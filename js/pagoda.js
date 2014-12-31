@@ -211,7 +211,17 @@
         $(".pagoda-help-hide").click(function() {
             $(".pagoda-help-content").hide();
         });
+        $(".pagoda-flip").click(function() {
+            $(".pagoda-flip").hide();
+            $(".pagoda-unflip").show();
+            $(".pagoda-cell").addClass("seatwalla-seat-container-flip");
+        });
 
+        $(".pagoda-unflip").click(function() {
+            $(".pagoda-flip").show();
+            $(".pagoda-unflip").hide();
+            $(".pagoda-cell").removeClass("seatwalla-seat-container-flip");
+        });
 
         //pagodawalla.showStudentList();
 
@@ -476,7 +486,7 @@
             //}
         });
 
-        $cell.find(".seatwalla-delete").click(function(event) {
+        $cell.find(".pagoda-delete").click(function(event) {
             pagodawalla.removeStudent(event);
         });
     };
@@ -661,6 +671,7 @@
             var $cell = $(".seatwalla-cell[data-label='" + student.label + "']");
             $cell.text(student.cell);
             $cell.css("display", "inline-block");
+            student.share = "None";
             printList.push(student);
             pagodawalla.addToMasterList(student);
         }
@@ -719,7 +730,7 @@
                     table += "";
                 }
                 else {
-                    if (student.num > 0) {
+                    if (student.share  == "None") {
                         table += options.chitTemplateOld({student: student});
                     }
                     else {

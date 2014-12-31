@@ -18,9 +18,12 @@
 
     Seatwalla.prototype.defaults = {
         studentData: [],
+        do: [],
         numCols: 10,
         seatHeight: 100,
-        widthUnits: "%"
+        widthUnits: "%",
+        enableUndo: false,
+        docounter: 0
     };
 
     Seatwalla.prototype.init = function() {
@@ -32,6 +35,22 @@
 
         $(".seatwalla-help-hide").click(function() {
             $(".seatwalla-help-content").hide();
+        });
+
+        $(".seatwalla-flip").click(function() {
+            $(".seatwalla-flip").hide();
+            $(".seatwalla-unflip").show();
+            $(".seatwalla-seat-container").addClass("seatwalla-seat-container-flip");
+        });
+
+        $(".seatwalla-unflip").click(function() {
+            $(".seatwalla-flip").show();
+            $(".seatwalla-unflip").hide();
+            $(".seatwalla-seat-container").removeClass("seatwalla-seat-container-flip");
+        });
+
+        $(".seatwalla-undo").click(function() {
+            seatwalla.undo();
         });
     }
 
@@ -103,7 +122,31 @@
             }
         };
 
-        reader.readAsBinaryString(file);
+        reader.readAsText(file);
+    };
+
+    Seatwalla.prototype.showEmptyChart = function(options) {
+        var seatwalla = this;
+
+        var data = [];
+        var index = 0;
+
+        for (var row = 0; row < options.numRows; row++) {
+            for (var col = 0; col < options.numCols; col++) {
+                data[index] = {};
+                data[index].space = true;
+                data[index].pin = false;
+                data[index].age = 0;
+                data[index].num = 0;
+                index++;
+            }
+        }
+
+        options.studentData = data;
+        options.originalData = [];
+        options.totalStudent = data.length;
+
+        seatwalla.drawChart(options);
     };
 
     Seatwalla.prototype.setDimensions = function(first) {
@@ -140,7 +183,7 @@
 
         //if (first) {
         options.seatWidth = hallWidth / options.seatInRow;
-        console.log("width is set to " + options.seatWidth);
+        // console.log("width is set to " + options.seatWidth);
         if (options.widthUnits == "%") {
             options.seatWidth = ((options.seatWidth + 1) / hallWidth) * 100;
         }
@@ -180,7 +223,7 @@
         }
 
         var seats = $(".seatwalla-seat");
-        console.log("moving " + seats.length + "  " + direction)
+        //console.log("moving " + seats.length + "  " + direction)
         _.each(seats, function(seat) {
             var pos = $(seat).position();
             var newTop = pos.top + delta;
@@ -198,7 +241,9 @@
 
     Seatwalla.prototype.chopName = function(data, name) {
         var noQuoteName = name;
-        var quotes = noQuoteName.split('"');
+
+        noQuoteName = noQuoteName.replace(/[\u201C|\u201d|\u0022]/gi, "");
+        var quotes = noQuoteName.split('regex');
         if (quotes.length > 0 && quotes[1]) {
             noQuoteName = quotes[1];
         }
@@ -208,6 +253,9 @@
         var names = noQuoteName.split(" ");
         data.firstName = names[0];
         data.secondName = names[1];
+        if (names[2]) {
+            data.secondName += " " + names[2];
+        }
     };
 
     Seatwalla.prototype.getSeatInfoFromIndex = function(index) {
@@ -295,7 +343,7 @@
         }
         data.student.pin = true;
 
-        console.log("add space " + direction);
+        //console.log("add space " + direction);
         if (direction === "left" || direction == "right") {
             var from = lastIndex;
 
@@ -318,7 +366,7 @@
 
                     var $elementToMove = seatwalla.getElementAt(i);
                     var movedLeft = seatwalla.moveLeft(i, index, true);
-                    console.log(i + "  " + movedLeft);
+                    //console.log(i + "  " + movedLeft);
                 }
                 $seat = seatwalla.addStudentToGrid(data.student, data.index, true, null, $element, "after");//seatwalla.addSeat($hall, data, null, $element, "after");
             }
@@ -441,7 +489,7 @@
             $seatContainer.find(".seatwalla-second-name").css("text-decoration", "underline");
         }
         if (addToHall) {
-            console.log("append to " + data.index);
+            // console.log("append to " + data.index);
             if (!where) {
                 $hall.append($seatContainer);
             }
@@ -483,7 +531,7 @@
         $seat.off();
         $seat.on("dragstart", function(event) {
 
-            console.log("dragstart");
+            //console.log("dragstart");
             var target = $(event.target);
             var $seat = target.closest(".seatwalla-seat");
             $seat.addClass("seatwalla-seat-dragstart");
@@ -505,13 +553,13 @@
         });
 
         $seat.on("dragleave", function(event) {
-            console.log("dragleave");
+            // console.log("dragleave");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragover");
             // $(".seatwalla-seat").removeClass("seatwalla-seat-dragenter");
         });
 
         $seat.on("dragend", function(event) {
-            console.log("dragend");
+            //console.log("dragend");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragover");
             $(".seatwalla-seat").removeClass("seatwalla-seat-dragstart");
         });
@@ -547,17 +595,17 @@
             $seat.removeClass("seatwalla-seat-dragover");
 
             var targetName = target.find(".seatwalla-first-name").text();
-            console.log("drag " + targetName);
+            //console.log("drag " + targetName);
             var label = $seat.attr("data-label");
             var seatInfo = seatwalla.labelToIndex(label);
             var toIndex = seatInfo.index;
-            console.log("drop" + fromIndex + " :  " + toIndex);
+            //console.log("drop" + fromIndex + " :  " + toIndex);
 
             var $fromSeat = seatwalla.getMovableSeatAt(fromIndex);
             var $toSeat = seatwalla.getMovableSeatAt(toIndex);
             if ($fromSeat.length > 0 && $toSeat.length > 0) {
+                seatwalla.do();
                 seatwalla.insert(fromIndex, toIndex);
-
             }
             else {
                 if ($toSeat.length == 0) {
@@ -615,24 +663,20 @@
         $delete.click(function(event) {
             var r = confirm("Are you sure, you want to delete the student");
             if (r == true) {
+                seatwalla.do();
                 seatwalla.deleteSeat(event);
 
             }
         });
         $pin.click(function(event) {
+            seatwalla.do();
             seatwalla.pinSeat(event, data);
         });
 
         $edit.click(function(event) {
-
+            seatwalla.do();
             seatwalla.editStudent($seat, data);
         });
-
-        /*$seatRoomEdit.keypress(function(event){
-         if(event.keyCode == "13") {
-         $seatRoomEdit.attr("data-label", $seatRoomEdit.val());
-         }
-         });*/
 
         $seatRoomEdit.focusout(function(event) {
             // if(event.keyCode == "13") {
@@ -665,6 +709,7 @@
 
     Seatwalla.prototype.drawChart = function(inoptions) {
         var seatwalla = this;
+
         var options = this.options;
         _.extend(options, inoptions);
         $(".seatwalla-container").hide();
@@ -695,6 +740,7 @@
         $("#seatStyle").text(options.seatStyle);
         $("#centerName").text(options.centerName);
 
+        options.enableUndo = true;
     };
 
     Seatwalla.prototype.addSideBackRows = function() {
@@ -744,24 +790,6 @@
         var lastSeatIndex = $lastSeatIndex.attr("data-index");
         return parseInt(lastSeatIndex);
     };
-
-    /*Seatwalla.prototype.addNewStudent = function(event) {
-     var seatwalla = this;
-     var student = {};
-     student.firstName = "FirstName Here";
-     student.lastName = "LastName Here";
-     student.age = "Age Here";
-     student.num = "Course# Here";
-     var lastSeatIndex = seatwalla.getLastIndex();
-     var seat = seatwalla.getElementAt(lastSeatIndex + 1);
-
-     var $seat = seatwalla.addStudentToGrid(student, lastSeatIndex + 1, false);
-
-     var data = {};
-     data.seat = seat;
-     data.student = student;
-     seatwalla.editStudent($seat, data);
-     }*/
 
     Seatwalla.prototype.addStudentToGrid = function(student, index, space, $seatContainer, $srcElement, where) {
         var seatwalla = this;
@@ -828,7 +856,7 @@
         var target = $(event.target);
         var $seat = target.closest(".seatwalla-seat");
         var deletedIndex = parseInt($seat.attr("data-index"));
-        console.log("Deleted  " + deletedIndex);
+        //console.log("Deleted  " + deletedIndex);
 
         var label = $seat.attr("data-label");
         var cell = parseInt($seat.find(".seatwalla-cell").text().split(" ")[0]);
@@ -889,7 +917,7 @@
 
         // }
 
-        console.log("Deleting seat " + deletedIndex + ", lastIndex " + lastIndex);
+        //console.log("Deleting seat " + deletedIndex + ", lastIndex " + lastIndex);
         _.delay(function() {
             seatwalla.setDimensions(false)
         }, 1000);
@@ -978,13 +1006,13 @@
 
         if (index == 0) {
             var $elementAfter = seatwalla.getElementAt(1);
-            console.log("Removed " + element.attr("data-index"));
+            //console.log("Removed " + element.attr("data-index"));
             seatwalla.addStudentToGrid(student, index, student.space, null, $elementAfter, "before");
 
         }
         else {
             var $elementBefore = seatwalla.getElementAt(index - 1);
-            console.log("Removed " + element.attr("data-index"));
+            //console.log("Removed " + element.attr("data-index"));
             seatwalla.addStudentToGrid(student, index, student.space, null, $elementBefore, "after");
         }
 
@@ -999,7 +1027,7 @@
 
         var lastIndex = seatwalla.getLastIndex();
         if (fromIndex == toIndex) {
-            console.log("cannot move to same place");
+            //console.log("cannot move to same place");
             return;
         }
 
@@ -1008,7 +1036,7 @@
         }
 
         if ($seat.length > 0) {
-            console.log("move  " + fromIndex + "  :  " + toIndex);
+            //console.log("move  " + fromIndex + "  :  " + toIndex);
 
             var left = seatInfo.left + options.widthUnits;
             var top = seatInfo.top + "px";
@@ -1140,6 +1168,7 @@
 
         var dataArr = seatwalla.extractData(true);
         var options = seatwalla.options;
+        options.enableUndo = true;
         seatwalla.options = _.defaults(options, this.defaults);
         seatwalla.setDimensions(false);
         $(".seatwalla-hall").empty();
@@ -1149,11 +1178,8 @@
         for (var i = 0; i < options.totalStudent; i++) {
             var student = options.studentData[i];
             seatwalla.addStudentToGrid(student, i, student.space);
+            console.log(student.firstName, student.index, student.pin);
         }
-
-        // $(".seatwalla-tools-tray").show();
-
-        //seatwalla.drawChart(seatwalla.options);
     };
 
     Seatwalla.prototype.assignCells = function($pagoda, init) {
@@ -1169,6 +1195,7 @@
         $(".pagoda-container").show();
         $(".seatwalla-hall").hide();
         options.pagodaData = pagodaData;
+        seatwalla.stopUndo();
 
         if (init) {
             $pagoda.initData(pOptions);
@@ -1191,7 +1218,7 @@
             $cell.attr("data-label", label);
             $cell.find(".seatwalla-label").text(label);
         }
-        else if ($cell.length > 1){
+        else if ($cell.length > 1) {
 
             for (var i = 0; i < $cell.length; i++) {
                 var $currentCell = $($cell[i]);
@@ -1239,7 +1266,8 @@
             });
         }
 
-        var oldStudents = 0; newStudents = 0;
+        var oldStudents = 0;
+        newStudents = 0;
         _.each(studentData, function(student) {
             var numCols = options.seatInRow;
             var mode = student.index % numCols;
@@ -1250,10 +1278,10 @@
                 }
             }
 
-
             if (student.num && student.num > 0) {
                 oldStudents++;
-            } else {
+            }
+            else {
                 newStudents++;
             }
         });
@@ -1430,53 +1458,53 @@
 
     };
 
-    Seatwalla.prototype.writeToFile = function() {
-        var seatwalla = this;
-        var data = seatwalla.extractData();
+    /* Seatwalla.prototype.writeToFile = function() {
+     var seatwalla = this;
+     var data = seatwalla.extractData();
 
-        function onInitFs(fs) {
+     function onInitFs(fs) {
 
-            fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
+     fs.root.getFile('log.txt', {create: true}, function(fileEntry) {
 
-                // Create a FileWriter object for our FileEntry (log.txt).
-                fileEntry.createWriter(function(fileWriter) {
+     // Create a FileWriter object for our FileEntry (log.txt).
+     fileEntry.createWriter(function(fileWriter) {
 
-                    fileWriter.onwriteend = function(e) {
-                        console.log('Write completed.');
-                    };
+     fileWriter.onwriteend = function(e) {
+     console.log('Write completed.');
+     };
 
-                    fileWriter.onerror = function(e) {
-                        console.log('Write failed: ' + e.toString());
-                    };
+     fileWriter.onerror = function(e) {
+     console.log('Write failed: ' + e.toString());
+     };
 
-                    // Create a new Blob and write it to log.txt.
-                    var blob = new Blob([data], {type: 'text/plain'});
+     // Create a new Blob and write it to log.txt.
+     var blob = new Blob([data], {type: 'text/plain'});
 
-                    fileWriter.write(blob);
+     fileWriter.write(blob);
 
-                }, function() {
-                });
+     }, function() {
+     });
 
-            }, function() {
-            });
+     }, function() {
+     });
 
-        }
+     }
 
-        function onError() {
-            console.log('Error : ', arguments);
-        }
+     function onError() {
+     console.log('Error : ', arguments);
+     }
 
-        navigator.webkitPersistentStorage.requestQuota(1024 * 1024 * 1024, function(grantedBytes) {
-            console.log('requestQuota: ', arguments);
-            requestFS(grantedBytes);
-        }, onError);
+     navigator.webkitPersistentStorage.requestQuota(1024 * 1024 * 1024, function(grantedBytes) {
+     console.log('requestQuota: ', arguments);
+     requestFS(grantedBytes);
+     }, onError);
 
-        function requestFS(grantedBytes) {
-            window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(fs) {
-                console.log('fs: ', arguments); // I see this on Chrome 27 in Ubuntu
-            }, onError);
-        }
-    };
+     function requestFS(grantedBytes) {
+     window.webkitRequestFileSystem(window.PERSISTENT, grantedBytes, function(fs) {
+     console.log('fs: ', arguments); // I see this on Chrome 27 in Ubuntu
+     }, onError);
+     }
+     };*/
 
     Seatwalla.prototype.editStudent = function($seat, data) {
 
@@ -1546,6 +1574,7 @@
     };
 
     Seatwalla.prototype.updateNote = function($seat, student) {
+        var seatwalla = this;
         if (student.text && student.text.length > 0) {
             $seat.find(".seatwalla-note").css("display", "inline-block");
         }
@@ -1565,7 +1594,7 @@
         else {
             $seatToMove = seatwalla.getElementAt(fromIndex);
             $seatToMove.remove();
-            console.log("Remove the seat dragged " + fromIndex);
+            //console.log("Remove the seat dragged " + fromIndex);
         }
 
         var $target = seatwalla.getElementAt(toIndex);
@@ -1609,11 +1638,21 @@
     };
 
     Seatwalla.prototype.pinAll = function(option) {
+        var seatwalla = this;
+        seatwalla.do();
+        seatwalla.options.enableUndo = false;
         $(".seatwalla-seat[data-pin='false']").find(".seatwalla-pin").click();
+        seatwalla.options.enableUndo = true;
+
+
     };
 
     Seatwalla.prototype.unpinAll = function(option) {
+        var seatwalla = this;
+        seatwalla.do();
+        seatwalla.options.enableUndo = false;
         $(".seatwalla-seat[data-pin='true']").find(".seatwalla-pin").click();
+        seatwalla.options.enableUndo = true;
     };
 
     var allSeats = $(".seatwalla-seat");
@@ -1628,6 +1667,61 @@
 
     });
 
+
+    Seatwalla.prototype.startUndo = function(option) {
+        var seatwalla = this;
+        seatwalla.options.enableUndo = true;
+
+        seatwalla.options.do = [];
+    }
+
+
+    Seatwalla.prototype.stopUndo = function(option) {
+        var seatwalla = this;
+        seatwalla.options.enableUndo = false;
+
+        seatwalla.options.do = [];
+    }
+
+    Seatwalla.prototype.do = function() {
+        var seatwalla = this;
+        var hallHtml = $(".seatwalla-hall").html();
+
+        if (seatwalla.options.enableUndo) {
+            var counter = parseInt(seatwalla.options.docounter);
+            var length = seatwalla.options.do.length;
+            seatwalla.options.do.slice(0, counter + 1);
+
+            if (length == 4) {
+                seatwalla.options.do.slice(1);
+            }
+            seatwalla.options.do.push(hallHtml);
+            length = seatwalla.options.do.length;
+            seatwalla.options.docounter = length - 1;
+            console.log("do length ----" + length + "counter ---- " + seatwalla.options.docounter);
+        }
+    };
+
+    Seatwalla.prototype.undo = function() {
+        var seatwalla = this;
+        var length = seatwalla.options.do.length;
+        if (length == 0) {
+            alert("There is nothing to undo");
+        }
+        else {
+            var counter = parseInt(seatwalla.options.docounter);
+            var action = seatwalla.options.do[counter];
+
+            $(".seatwalla-hall").html(action);
+            seatwalla.reload();
+            seatwalla.options.do.slice(0, counter);
+            if (counter > 0) {
+                seatwalla.options.docounter = counter - 1;
+            }
+            console.log("undo length ----" + length + "counter ---- " + seatwalla.options.docounter);
+        }
+    };
+
     Seatwalla.prototype.execute = function(method, options) {
 
         var seatwalla = this;
@@ -1636,6 +1730,9 @@
         }
         else if (method == "showChart") {
             seatwalla.drawChart(options);
+        }
+        else if (method == "showEmptyChart") {
+            seatwalla.showEmptyChart(options);
         }
         else if (method == "assignCells") {
             seatwalla.assignCells(options.$pagoda, options.init);
@@ -1648,6 +1745,12 @@
         }
         else if (method == "unpinAll") {
             seatwalla.unpinAll(options);
+        }
+        else if (method == "stopUndo") {
+            seatwalla.stopUndo(options);
+        }
+        else if (method == "startUndo") {
+            seatwalla.startUndo(options);
         }
     };
 
