@@ -486,7 +486,7 @@
             //}
         });
 
-        $cell.find(".pagoda-delete").click(function(event) {
+        $cell.find(".seatwalla-delete").click(function(event) {
             pagodawalla.removeStudent(event);
         });
     };
