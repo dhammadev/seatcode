@@ -7,6 +7,16 @@
  */
 
 (function($) {
+
+    var language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
+    var confirmTemplate = _.template("<div class='confirm'>" +
+                                     "<div><%=message%></div>" +
+                                     "<div class='confirm-buttons'>" +
+                                     "<input class='confirm-yes' type='button' value='Yes' /> " +
+                                     "<input class='confirm-no' type='button' value='No'/>" +
+                                     "</div>" +
+                                     "</div>");
+
     var Seatwalla = function(el, options) {
         options = options instanceof Object ? options : {};
         _.defaults(options, this.defaults);
@@ -28,6 +38,7 @@
 
     Seatwalla.prototype.init = function() {
         var seatwalla = this;
+        language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
 
         $(".seatwalla-help").click(function() {
             $(".seatwalla-help-content").show();
@@ -61,7 +72,8 @@
         var files = $("#files").get(0).files;
 
         if (!files.length) {
-            alert('Please select a file!');
+
+            alert(translation[language].ALERT_SELECT_FILE);
             return;
         }
 
@@ -356,7 +368,8 @@
 
             var $elementOnLeft = seatwalla.getElementAt(data.index);
             if (seatwalla.isPin($elementOnLeft)) {
-                alert("Cannot add a space due to fixed space besides it, please un-pin it");
+                var alertText = translation[language].ALERT_CANNOT_ADD_FIXED_SPACE;
+                alert(alertText);
                 return
             }
 
@@ -383,7 +396,8 @@
             var newIndex = parseInt(index) + parseInt(options.seatInRow);
             var $topElement = seatwalla.getElementAt(newIndex);
             if (seatwalla.isPin($topElement)) {
-                alert("Cannot add a space due to fixed space besides it, please un-pin it");
+                var alertText = translation[language].ALERT_CANNOT_ADD_FIXED_SPACE;
+                alert(alertText);
                 return;
             }
             if (lastIndex < newIndex) {
@@ -465,13 +479,14 @@
 
                                               "<div class='seatwalla-cell' data-label='<%=seat.label%>'></div>" +
 
-                                              "<input class='seatwalla-seat-room-edit' type='text'  placeholder='Room'  maxlength='10' value='<%=student.room%>' editable='true'/>" +
+                                              "<input class='seatwalla-seat-room-edit' type='text' placeholder='<%=placeHolder.room%>'  maxlength='10' value='<%=student.room%>' editable='true'/>" +
 
                                               "<div class='seatwalla-seat-text'><%=student.text%></div>" +
                                               "<%}%>" +
                                               "<div>" +
                                               "</div>");
 
+        data.placeHolder = module.placeHolder;
         var $seatContent = $seatContentTemplate(data);
 
         $seatContent = $seatContainer.append($seatContent);
@@ -609,14 +624,12 @@
             }
             else {
                 if ($toSeat.length == 0) {
-                    alert("You are dropping on the fixed seat, find movable seat to drop or un pin the target seat ");
+                    alert(translation[language].ALERT_CANNOT_DROP_ON_FIXED_SEAT);
                 }
                 else if (!$fromSeat.length == 0) {
-                    alert("You are dragging a fixed seat, drag movable seat")
+                    alert(translation[language].ALERT_CANNOT_MOVE_FIXED_SEAT)
                 }
-
             }
-
         });
 
         var $delete = $seat.find(".seatwalla-delete");
@@ -661,10 +674,28 @@
         });
 
         $delete.click(function(event) {
-            var r = confirm("Are you sure, you want to delete the student");
+            var r = confirm(translation[language].CONFRIM_SEAT_DELETE);
             if (r == true) {
-                seatwalla.do();
-                seatwalla.deleteSeat(event);
+                $("body").find(".confirm").remove();
+                var message = translation[language].CONFIRM_DELETE_FROM_PAGODA;
+                var $confirm = $(confirmTemplate({message: message}));
+                $("body").append($confirm);
+                var position = $(event.target).closest(".seatwalla-seat").position();
+                $(".confirm").css({top: position.top + 20, left: position.left + 20});
+
+
+                var confirmDeleteFromPagoda = false;
+                $(".confirm-yes").bind("click", function() {
+                    $("body").find(".confirm").remove();
+                    seatwalla.do();
+                    seatwalla.deleteSeat(event, true);
+                });
+                $(".confirm-no").bind("click", function() {
+                    $("body").find(".confirm").remove();
+                    seatwalla.do();
+                    seatwalla.deleteSeat(event, false);
+                });
+
 
             }
         });
@@ -850,7 +881,7 @@
         });
     };
 
-    Seatwalla.prototype.deleteSeat = function(event) {
+    Seatwalla.prototype.deleteSeat = function(event, deleteFromPagoda) {
         var seatwalla = this;
         var options = seatwalla.options;
         var target = $(event.target);
@@ -859,16 +890,20 @@
         //console.log("Deleted  " + deletedIndex);
 
         var label = $seat.attr("data-label");
+
         var cell = parseInt($seat.find(".seatwalla-cell").text().split(" ")[0]);
 
-        var $cell = $(".pagoda-shared-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
-        if ($cell.length == 0) {
-            $cell = $(".pagoda-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
+        if (deleteFromPagoda) {
+            var $cell = $(".pagoda-shared-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
+            if ($cell.length == 0) {
+                $cell = $(".pagoda-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
+            }
+
+            if ($cell.length > 0) {
+                options.$pagoda.cancelAssignment($cell);
+            }
         }
 
-        if ($cell.length > 0) {
-            options.$pagoda.cancelAssignment($cell);
-        }
         $seat.remove();
 
         var lastIndex = seatwalla.getLastIndex();
@@ -1260,6 +1295,8 @@
 
                 if (found.length == 0) {
                     origStudent.reason = "missing";
+                    origStudent.missingMessage = module.replaceArg(translation[language].SEATWALLA_CHECK_REMOVED,
+                        origStudent.firstName, origStudent.secondName, origStudent.num, origStudent.age);
                     checkList.push(origStudent);
                 }
 
@@ -1273,7 +1310,9 @@
             var mode = student.index % numCols;
             if (mode == 0) {
                 if (student.age && (student.age <= 25)) {
-                    student.reason = "young"
+                    student.reason = "young";
+                    student.youngMessage = module.replaceArg(translation[language].SEATWALLA_CHECK_YOUNG,
+                        student.firstName, student.secondName, student.num, student.age);
                     checkList.push(student);
                 }
             }
@@ -1294,11 +1333,13 @@
                                        "<%_.each(checkList, function(student){%>" +
                                        "<% if (student.reason == 'missing') {%>" +
                                        "<div class='seatwalla-check-student-info'>" +
-                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and is <%=student.age%> years old is removed." +
+                                       "<%=student.missingMessage%>" +
+                                           // "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and is <%=student.age%> years old is removed." +
                                        "</div>" +
                                        "<% } else if (student.reason == 'young') {%> " +
                                        "<div class='seatwalla-check-student-info'>" +
-                                       "<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and <%=student.age%> years old is young to be in the aisle." +
+                                       "<%=student.youngMessage%>" +
+                                           //"<%=student.firstName%> <%=student.secondName%> has sat <%=student.num%> course(s) and <%=student.age%> years old is young to be in the aisle." +
                                        "</div>" +
                                        "<% }}) %>" +
                                        "</div>"
@@ -1524,11 +1565,11 @@
 
         var editSeatTemplate = _.template("<div class='seatwalla-edit-container'>" +
 
-                                          "<input class='seatwalla-seat-first-name-edit' type='text' placeholder='First Name' value='<%=student.firstName%>'/>" +
-                                          "<input class='seatwalla-seat-second-name-edit' type='text'  placeholder='Second Name' value='<%=student.secondName%>'/>" +
-                                          "<input class='seatwalla-seat-age-edit' type='text'  placeholder='Age'  value='<%=student.age%>'/>" +
-                                          "<input class='seatwalla-seat-num-edit' type='text'  placeholder='Courses' value='<%=student.num%>'/>" +
-                                          "<textarea class='seatwalla-seat-text-edit' type='text'  placeholder='Notes'>" +
+                                          "<input class='seatwalla-seat-first-name-edit' type='text' placeholder='<%=placeHolder.firstName%>' value='<%=student.firstName%>'/>" +
+                                          "<input class='seatwalla-seat-second-name-edit' type='text'  placeholder='<%=placeHolder.secondName%>' value='<%=student.secondName%>'/>" +
+                                          "<input class='seatwalla-seat-age-edit' type='text'  placeholder='<%=placeHolder.age%>'  value='<%=student.age%>'/>" +
+                                          "<input class='seatwalla-seat-num-edit' type='text'  placeholder='<%=placeHolder.courses%>' value='<%=student.num%>'/>" +
+                                          "<textarea class='seatwalla-seat-text-edit' type='text'  placeholder='<%=placeHolder.notes%>'>" +
                                           "<%=student.text%>" +
                                           "</textarea>" +
                                           "<i class='icon-kub-approve seatwalla-edit-done'></i>" +
@@ -1536,7 +1577,7 @@
 
                                           "</div>");
 
-        var $editSeat = $(editSeatTemplate({student: data.student}));
+        var $editSeat = $(editSeatTemplate({student: data.student, placeHolder: module.placeHolder}));
         $(".seatwalla-edit-container").remove();
         $editSeat = $(".seatwalla-hall").append($editSeat);
 
@@ -1644,7 +1685,6 @@
         $(".seatwalla-seat[data-pin='false']").find(".seatwalla-pin").click();
         seatwalla.options.enableUndo = true;
 
-
     };
 
     Seatwalla.prototype.unpinAll = function(option) {
@@ -1667,14 +1707,12 @@
 
     });
 
-
     Seatwalla.prototype.startUndo = function(option) {
         var seatwalla = this;
         seatwalla.options.enableUndo = true;
 
         seatwalla.options.do = [];
     }
-
 
     Seatwalla.prototype.stopUndo = function(option) {
         var seatwalla = this;
@@ -1706,7 +1744,7 @@
         var seatwalla = this;
         var length = seatwalla.options.do.length;
         if (length == 0) {
-            alert("There is nothing to undo");
+            alert(translation[language].ALERT_NOTHING_TO_UNDO);
         }
         else {
             var counter = parseInt(seatwalla.options.docounter);
@@ -1718,7 +1756,7 @@
             if (counter > 0) {
                 seatwalla.options.docounter = counter - 1;
             }
-            console.log("undo length ----" + length + "counter ---- " + seatwalla.options.docounter);
+            // console.log("undo length ----" + length + "counter ---- " + seatwalla.options.docounter);
         }
     };
 

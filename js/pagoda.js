@@ -21,7 +21,9 @@
         "67": "6, 7",
         "89": "8, 9"
     };
+    var language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
     var Pagodawalla = function(el, options) {
+
         options = options instanceof Object ? options : {};
         _.defaults(options, this.defaults);
         this.options = options;
@@ -85,7 +87,8 @@
 
         sharedCellQueryTemplate: _.template("<div class='pagoda-shared-cell-questionaire'>" +
                                             "<span class='pagoda-shared-cell-question'>" +
-                                            "Do you want to share the cell?" +
+                                            translation[language].PAGODA_SHARE_CELL +
+                                            //"Do you want to share the cell?" +
                                             "</span>" +
 
                                             "<div class='pagoda-shared-cell-options'>" +
@@ -201,6 +204,7 @@
 
     Pagodawalla.prototype.init = function() {
         var pagodawalla = this;
+        language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
 
         pagodawalla.initCenterList();
 
@@ -384,9 +388,6 @@
     Pagodawalla.prototype.showFloor = function(floorNo) {
         var pagodawalla = this;
 
-
-
-
         if (floorNo == "3") {
             $(".pagoda-floor").show();
             $(".pagoda-floor-title").show();
@@ -508,7 +509,7 @@
     Pagodawalla.prototype.removeStudent = function(event) {
         var pagodawalla = this;
 
-        var r = confirm("Are you sure, you want to cancel the cell assignment? Note: Student will not get removed from the hall or pagoda list.");
+        var r = confirm(translation[language].CONFIRM_PAGODA_CELL_DELETE);
         if (r == true) {
 
             var $target = $(event.target);
@@ -828,9 +829,28 @@
     };
 
     Pagodawalla.prototype.clearPrintList = function() {
-        printList = [];
+        var pagodawalla = this;
         var $chitView = $(".pagoda-chit-print");
         $chitView.empty();
+
+     /*   printList = [];
+        var $chitView = $(".pagoda-chit-print");
+        var $tableChitView = $(".pagoda-chit-print table");
+        $tableChitView.css("display", "none");
+        var chitHtml = $chitView.html();
+        $chitView.empty();
+        $(".pagoda").append("<div class='pagoda-chit-previous'>Previous</div>");
+        $(".pagoda-chit-previous").append($(chitHtml));
+        $(".pagoda-chit-previous").bind("click", function(){
+            pagodawalla.showPreviousList();
+        });*/
+    };
+
+    Pagodawalla.prototype.showPreviousList = function() {
+        var $chitView = $(".pagoda-chit-print");
+        var $tableChitView = $(".pagoda-chit-previous table");
+        $tableChitView.css("display", "table");
+        //$chitView.prepend();
     };
 
     Pagodawalla.prototype.updateStudentList = function(inoptions, selectedStudents) {

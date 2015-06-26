@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>SeatWalla</title>
+<link rel="stylesheet" href="css/pictonic.css">
+<link rel="stylesheet" href="font/pictonic.woff">
+<link rel="stylesheet" href="css/seatwalla.css">
+<link rel="stylesheet" href="css/print.css" media="print">
+<script src="jquery.js"></script>
+<script src="js/seatwallaCookie.js"></script>
+<script src="js/browserDetection.js"></script>
+<script src="js/translation.js"></script>
+<script src="js/text.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/pagodaData.js"></script>
+<script src="js/pagoda.js"></script>
+<script src="js/seatwalla.js"></script>
+<script>
+var gender = "male";
+var pagodaInitialized = false;
+var language = localStorage.getItem("seatwalla_language") || "ENGLISH";
+
+function onload(langChanged) {
+
+    language = localStorage.getItem("seatwalla_language") || "ENGLISH";
+    var validBrowser = browserDetection.isValidBrowserVersion();
+    if (!validBrowser) {
+        var alertBrowserString = translation[language].ALERT_BROWSER;
+        alert(alertBrowserString);
+    }
+    else {
+
+        /* if (!langChanged) {
+         var templateLang = _.template($("script.template_language").html());
+         $(".seatwalla-language").empty();
+
+         $(".seatwalla-language").append(
+         templateLang(module.data(language))
+         );
+         }*/
+
+        var template = _.template(
+                $("script.template").html()
+        );
+        // var seatwallaRegion = $(".seatwalla-region");
+        /*   if (seatwallaRegion.length() > 1) {
+         $(".seatwalla-region").empty();
+         }
+         else {
+         $("body").append('<div class="seatwalla-region"></div>');
+         }*/
+        $("body").empty();
+        $("body").append(
+                template(module.data(language))
+        );
+    }
+
+    // var language = cookie.getCookie("seatwalla-language") || "ENGLISH";
+
+    if ($(".seatwalla-hall").children().length > 1) {
+        reload();
+    }
+
+    var $pagoda = $(".pagoda-container");
+    $pagoda.pagoda();
+    $pagoda.data("pagoda").execute("init");
+}
+;
+
+function showLanguage() {
+    var lang = $(".seatwalla-language-select").val();
+    localStorage.setItem("seatwalla_language", lang);
+    onload(true);
+}
+;
+
+function showFirstPage() {
+    $(".seatwalla-container").show();
+    $(".seatwalla-hall").hide();
+    $(".seatwalla-hall").empty();
+    //$(".seatwalla-tools-tray").hide();
+
+}
+;
+
+function continueEditing() {
+    //$(".seatwalla-tools-tray").hide();
+}
+;
+
+function reload() {
+    var $seat = $(".seatwalla-container");
+    $seat.seat();
+    $seat.data("seatwalla").reload();
+
+    $(".seatwalla-pinall").removeClass("hidden");
+    $(".seatwalla-unpinall").addClass("hidden");
+    //$(".seatwalla-tools-tray").show();
+}
+;
+
+function init(event) {
+    var $seat = $(".seatwalla-container");
+    $seat.seat();
+    $seat.data("seatwalla").execute("readFile");
+}
+;
+
+function showChart(event) {
+    var $seat = $(".seatwalla-container");
+    var options = {};
+    options.numCols = $(".seatwalla-cols").val();
+    options.gender = $('input[name="sex"]:checked').val();
+    options.seatStyle = $('input[name="seatStyle"]:checked').val();
+    options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
+    var seatwalla = $seat.data("seatwalla");
+    if (!seatwalla) {
+        alert(translation[language].ALERT_SELECT_CSV_FILE);
+    }
+    else {
+        $seat.data("seatwalla").execute("showChart", options);
+        $(".seatwalla-hall").show();
+        $(".seatwalla-course-info").show();
+    }
+}
+;
+
+function saveData(event) {
+    var $seat = $(".seatwalla-container");
+    var options = {};
+    options.numCols = $(".seatwalla-cols").val();
+    options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
+    $seat.data("seatwalla").writeToFile("saveData", options);
+}
+;
+
+function assignCells(event) {
+    var $pagoda = $(".pagoda-container");
+    if (!pagodaInitialized) {
+
+        $pagoda.pagoda();
+        $pagoda.data("pagoda").execute("init");
+
+        var $seat = $(".seatwalla-container");
+        $seat.seat();
+        $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
+        $(".seatwalla-course-info").hide();
+        $(".seatwalla-hall").hide();
+        pagodaInitialized = true;
+
+        $(".pagoda-pagoda-view").hide();
+        $(".pagoda-clear-print-list").hide();
+        $(".pagoda-chit-view").show();
+        $(".pagoda-table-view").show();
+        $(".pagoda-flip-controls").show();
+        $(".pagoda-levels").show();
+    }
+    else {
+        $pagoda.show();
+        showPagoda(event);
+        var $seat = $(".seatwalla-container");
+        $(".seatwalla-course-info").hide();
+        $(".seatwalla-hall").hide();
+        $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
+
+    }
+}
+;
+
+function check(event) {
+    var $seat = $(".seatwalla-container");
+    $seat.seat();
+    $seat.data("seatwalla").execute("check");
+}
+;
+
+function pinAll() {
+    var $seat = $(".seatwalla-container");
+    $seat.seat();
+
+    $(".seatwalla-pinall").addClass("hidden");
+    $(".seatwalla-unpinall").removeClass("hidden");
+
+    $seat.data("seatwalla").execute("pinAll");
+
+}
+;
+
+function unpinAll() {
+    var $seat = $(".seatwalla-container");
+    $seat.seat();
+
+    $(".seatwalla-pinall").removeClass("hidden");
+    $(".seatwalla-unpinall").addClass("hidden");
+
+    $seat.data("seatwalla").execute("unpinAll");
+}
+;
+
+function showPagoda(event) {
+    var $pagodaContainer = $(".pagoda-chart-container");
+    $pagodaContainer.children().show();
+    $pagodaContainer.show();
+
+    var $chitView = $(".pagoda-chit-print");
+    $chitView.hide();
+
+    var $tableView = $(".pagoda-table-print");
+    $tableView.hide();
+
+    $(".pagoda-pagoda-view").hide();
+    $(".pagoda-clear-print-list").hide();
+    $(".pagoda-chit-view").show();
+    $(".pagoda-table-view").show();
+    $(".pagoda-flip-controls").show();
+    $(".pagoda-levels").show();
+};
+
+function showSeating(event) {
+    var $hall = $(".hall");
+    var $pagodaContainer = $(".pagoda-container");
+    $hall.children().show();
+    $hall.show();
+    $pagodaContainer.hide();
+    var $seat = $(".seatwalla-container");
+    $seat.data("seatwalla").execute("startUndo");
+};
+
+function showChits(event) {
+    var $pagodaContainer = $(".pagoda-chart-container");
+    $pagodaContainer.hide();
+
+    var $studentList = $(".pagoda-student-list-container");
+    $studentList.hide();
+
+    var $chitView = $(".pagoda-chit-print");
+    $chitView.show();
+    var $tableView = $(".pagoda-table-print");
+    $tableView.hide();
+
+    var $pagoda = $(".pagoda-container");
+    $pagoda.data("pagoda").execute("showChits");
+
+
+    $(".pagoda-pagoda-view").show();
+    $(".pagoda-clear-print-list").show();
+    $(".pagoda-chit-view").hide();
+    $(".pagoda-table-view").show();
+    $(".pagoda-flip-controls").hide();
+    $(".pagoda-levels").hide();
+}
+;
+
+function showTable(event) {
+    var $pagodaContainer = $(".pagoda-chart-container");
+    $pagodaContainer.hide();
+    var $studentList = $(".pagoda-student-list-container");
+    $studentList.hide();
+    var $chitView = $(".pagoda-chit-print");
+    $chitView.hide();
+    var $tableView = $(".pagoda-table-print");
+    $tableView.show();
+    var $pagoda = $(".pagoda-container");
+    $pagoda.data("pagoda").execute("showTable");
+
+
+    $(".pagoda-pagoda-view").show();
+    $(".pagoda-clear-print-list").hide();
+    $(".pagoda-chit-view").show();
+    $(".pagoda-table-view").hide();
+    $(".pagoda-flip-controls").hide();
+    $(".pagoda-levels").hide();
+}
+;
+
+function showFloor() {
+    var $pagoda = $(".pagoda-container");
+    var floorSelected = $(".pagoda-levels-select").val();
+    $pagoda.data("pagoda").execute("showFloor", floorSelected);
+
+}
+;
+
+function clearPrintList() {
+    var $pagoda = $(".pagoda-container");
+    $pagoda.data("pagoda").execute("clearPrintList");
+}
+;
+
+function selectGender(gender) {
+    this.gender = gender;
+}
+;
+</script>
+
+</head>
+<script type="text/x-underscore" class="template">
+<div class="seatwalla-container">
+    <div class="seatwalla-language">
+        <span><%=HALL_CHOOSE_LANGUAGE%></span>
+        <select class="seatwalla-language-select" onchange="showLanguage()" value="<%=language%>">
+            <option value="ENGLISH"
+            <%if(language === "ENGLISH"){%> selected <%}%> ><%=HALL_ENGLISH%></option>
+            <option value="VIETNAMESE"
+            <%if(language === "VIETNAMESE"){%>selected <%}%> ><%=HALL_VIETNAMESE%></option>
+            <option value="SPANISH"
+            <%if(language === "SPANISH"){%>selected<%} %> ><%=HALL_SPANISH%></option>
+        </select>
+    </div>
+
+    <div class="seatwalla-h1"><%=HALL_SEATWALLA%></div>
+    <div class="seatwalla-h2">Version 2014-12-27</div>
+    <div class="seatwalla-h2"><%=HALL_CONTACT%> <a href="mailto:seatwalla-na@at.dhamma.org">
+        seatwalla-na@at.dhamma.org</a></div>
+    <div class="seatwalla-h2"><%=HALL_EMAIL_TO%>
+        <a href="mailto:seatwalla-na-users-subscribe@at.dhamma.org">seatwalla-na-users-subscribe@at.dhamma.org</a>
+    </div>
+
+    <div class="seatwalla-step-text"><%=HALL_STEP_1%></div>
+    <div class="seatwalla-step">
+        <div class="seatwalla-help-text"><%=HALL_DHAMMAREG_ACCOUNT%>
+            <a class="seatwalla-dhamma-reg" href="mailto:support@dhammareg.dhamma.org">Dhamma Reg Support</a>
+        </div>
+        <div>
+            <a class="seatwalla-link" href="<%=DHAMMA_REG_SITE%>" target="_blank">
+                <%=HALL_GOTO_DHAMMA_REG%>
+            </a>
+        </div>
+
+        <div class="seatwalla-help-text"><%=HALL_DOWNLOAD_FILES%>
+        </div>
+
+        <div class="seatwalla-file">
+            <input class="seatwalla-file-input" type="file" id="files" accept=".csv"
+            , name="file" onchange="init()"/>
+        </div>
+    </div>
+
+    <div class="seatwalla-step-text"><%=HALL_STEP_2%></div>
+    <div class="seatwall-step">
+        <div class="seatwalla-step"><%=HALL_CHOOSE_GENDER%></div>
+        <form class="seatwalla-step">
+            <input type="radio" name="sex" value="male" checked>
+            <%=HALL_MALE%>
+            <br>
+            <input type="radio" name="sex" value="female">
+            <%=HALL_FEMALE%>
+        </form>
+    </div>
+
+    <div class="seatwalla-step-text"><%=HALL_STEP_3%></div>
+    <div class="seatwall-step">
+        <div class="seatwalla-step"><%=HALL_NUM_ROW_CUSHIONS%></div>
+        <form class="seatwalla-step">
+            <input class="seatwalla-cols" type="text" name="numCols" value="10">
+        </form>
+    </div>
+    <div class="seatwalla-step-text"><%=HALL_STEP_4%></div>
+    <div class="seatwall-step">
+        <div class="seatwalla-step"><%=HALL_ADD_BACK_SIDE_ROWS%></div>
+        <form class="seatwalla-step">
+            <input class="seatwalla-add-back-side-rows" type="checkbox" name="addSideBackRows" checked="true">
+        </form>
+    </div>
+
+    <div class="seatwalla-step-text"><%=HALL_STEP_5%></div>
+    <div class="seatwall-step">
+        <div class="seatwalla-step"><%=HALL_SEATING_LABELS%></div>
+        <form class="seatwalla-step">
+            <input type="radio" name="seatStyle" value="Theatre" checked>
+            <%=HALL_THEATRE%>
+            <br>
+            <input type="radio" name="seatStyle" value="Number">
+            <%=HALL_SEQUENTIAL%>
+        </form>
+    </div>
+
+    <div class="seatwalla-step">
+        <button class="seatwalla-step seatwalla-show-chart" type="button" onclick="showChart()"><%=HALL_SHOW_CHART%>
+        </button>
+    </div>
+
+</div>
+
+<div class="hall">
+    <div class="seatwalla-course-info">
+        <button class="seatwalla-check" onclick="check()"><%=HALL_CHECK%></button>
+        <button class="seatwalla-pinall" onclick="pinAll()"><%=HALL_PIN_ALL%></button>
+        <button class="seatwalla-unpinall hidden" onclick="unpinAll()"><%=HALL_UNPIN_ALL%></button>
+        <button class="seatwalla-flip"><%=HALL_FLIP%></button>
+        <button class="seatwalla-unflip hidden"><%=HALL_UNFLIP%></button>
+        <button class="seatwalla-undo"><%=HALL_UNDO%></button><!--
+        <input type="text" class="seatwalla-teachers-name" placeholder="<%=HALL_AT_NAME%>"/>
+        <span><%=HALL_FROM%></span>
+        <input type="text" class="seatwalla-course-date-from" placeholder="<%=HALL_FROM_DATE%>"/>
+        <span><%=HALL_TO%></span>
+        <input type="text" class="seatwalla-course-date-to" placeholder="<%=HALL_TO_DATE%>"/>
+-->
+        <button class="seatwalla-assign-cell" onclick="assignCells()"><%=HALL_ASSIGN_PAGODA%></button>
+        <button class='seatwalla-help'><%=HALL_INSTRUCTIONS%></button>
+    </div>
+
+    <div class="seatwalla-hall">
+    </div>
+
+</div>
+<!--
+
+        <div class="seatwalla-tools-tray">
+            <button class="seatwalla-button seatwalla-start" type="button" onclick="showFirstPage()"> Start Again</button>
+            <button class="seatwalla-button seatwalla-resume" type="button" onclick="continueEditing()"> Continue</button>
+
+        </div>-->
+<div class="seat-data">
+    <span class="seatwalla-hidden-info" id="numCols"></span>
+    <span class="seatwalla-hidden-info" id="addSideBackRows"></span>
+    <span class="seatwalla-hidden-info" id="gender"></span>
+    <span class="seatwalla-hidden-info" id="seatStyle"></span>
+    <span class="seatwalla-hidden-info" id="centerName"></span>
+    <textarea class="seatwalla-notes-detail"></textarea>
+</div>
+
+<div class="pagoda-container">
+    <div class="pagoda-controls">
+
+        <div class="pagoda-levels buttons">
+            <select class="pagoda-levels-select" onchange="showFloor()" value="3">
+                <option value="3"><%=PAGODA_ALL%></option>
+                <option value="0"><%=PAGODA_TOP%></option>
+                <option value="1"><%=PAGODA_GROUND%></option>
+                <option value="2"><%=PAGODA_BASEMENT%></option>
+            </select>
+        </div>
+
+        <div class="pagoda-back-to-seating">
+            <button class="pagoda-back-to-seating" onclick="showSeating()"><%=PAGODA_BACK_TO_SEATING%></button>
+
+        </div>
+
+        <div class="pagoda-pagoda-view">
+            <button onclick="showPagoda()"><%=PAGODA_SHOW_PAGODA%></button>
+        </div>
+
+        <div class="pagoda-chit-view">
+            <button onclick="showChits()"><%=PAGODA_SHOW_CHITS%></button>
+
+        </div>
+
+        <div class="pagoda-table-view">
+            <button onclick="showTable()"><%=PAGODA_SHOW_TABLE%></button>
+
+        </div>
+
+        <div class="pagoda-clear-print-list">
+            <button onclick="clearPrintList()"><%=PAGODA_CLEAR_PRINT_LIST%></button>
+        </div>
+
+        <div class="pagoda-flip-controls">
+            <button class="pagoda-flip"><%=PAGODA_FLIP%></button>
+            <button class="pagoda-unflip hidden"><%=PAGODA_UNFLIP%></button>
+        </div>
+
+        <button class='pagoda-help'><%=HALL_INSTRUCTIONS%></button>
+    </div>
+
+    <div class="pagoda">
+        <div class="pagoda-chart-container">
+            <div class="pagoda-chart">
+
+            </div>
+            <div class="pagoda-student-list-container">
+                <div class='pagoda-student-search'>
+                    <input class='pagoda-student-search-text' type='text' placeholder='<%=PAGODA_FIRST_NAME%>'/>
+                </div>
+                <div class="pagoda-student-list"></div>
+            </div>
+        </div>
+        <div class="pagoda-chit-print"></div>
+        <div class="pagoda-table-print"></div>
+    </div>
+
+</div>
+
+<div class="seatwalla-help-content">
+    <i class='icon-kub-remove seatwalla-help-hide'></i>
+    <h1> Instructions</h1>
+    <p>
+        <b>
+            <font face="Arial">SeatWalla Instructions</font>
+        </b>
+    </p>
+    <p align="center">
+        <img border="0" src="img/Seatwalla1.gif" width="493" height="177">
+    </p>
+    <p align="center"><%=SEATWALLA_FIG_1%></p>
+    <p>&nbsp;</p>
+    <p align="center">
+        <img border="0" src="img/Seatwalla2.gif" width="534" height="157">
+    </p>
+    <p align="center"><%=SEATWALLA_FIG_2%></p>
+    <p>&nbsp;</p>
+    <p>
+        <font face="Arial">
+            <b>
+                <font style="font-size: 11pt"><%=SEATWALLA_TO_FIND%></font>
+            </b>
+            <span style="font-size: 11pt">
+                <br>
+            </span>
+            <font style="font-size: 11pt">
+                <br>
+                <br>
+                <b><%=SEATWALLA_TO_SAVE%></b>
+                <br>
+                <%=SEATWALLA_SAVE_TEXT%>
+                <br>
+                <b><%=SEATWALLA_TO_PRINT%></b>
+                <br>
+                <%=SEATWALLA_PRINT_TEXT%>
+                <br>
+                <b><%=SEATWALLA_FOR_MAC%></b>
+                <br>
+                <%=SEATWALLA_MAC_TEXT%>
+                <b><%=SEATWALLA_FOR_WINDOWS%></b>
+                <br>
+                <%=SEATWALLA_WINDOWS_TEXT%>
+                <br>
+                &nbsp;</font>
+        </font>
+    </p>
+
+</div>
+
+<div class="pagoda-help-content">
+    <i class='icon-kub-remove pagoda-help-hide'></i>
+    <h1><%=PAGODA_INSTRUCTIONS%></h1>
+    <ul>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_SELECT_FLOOR%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_DRAG_DROP%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_BACK_TO_SEAT%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_REASSIGN_CELL%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_SHOW_CHITS%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_SHOW_TABLE%></font>
+        </li>
+        <li>
+            <font face="Arial" style="font-size: 11pt"><%=PAGODA_INSTRUCTIONS_PRINT%></font>
+        </li>
+</div>
+</script>
+
+<body onload="onload()"></body>
+</html>

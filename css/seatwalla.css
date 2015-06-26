@@ -509,6 +509,13 @@ input {
 
 .pagoda-levels {
     display: inline-block;
+    border-radius: 5px;
+    padding: 3px 5px 3px 5px !important;
+    display: inline-block;
+    cursor: pointer;
+    background: #D4D0C8;
+    border: 1px outset darkgray;
+    font-size: 14px;
 
 }
 
@@ -731,6 +738,10 @@ td {
     width: 20%;
 }
 
+.pagoda-flip-controls {
+    display: inline-block;
+}
+
 .seatwalla-check-container {
     width: 500px;
     height: 100%;
@@ -760,4 +771,27 @@ td {
     -o-transform: rotate(180deg);
     -ms-transform: rotate(180deg);
     transform: rotate(180deg);
+}
+
+.seatwalla-language {
+    position: absolute;
+    top: 75px;
+    right: 200px;
+    color: antiquewhite;
+}
+
+.confirm {
+    background-color: #0000FF;
+    border: 4px solid #bbb;
+    border-radius: 3px;
+    color: #fff;
+    position: absolute;
+    z-index: 1000;
+    padding: 10px;
+    max-width: 400px;
+}
+
+.confirm-buttons {
+    padding-top:10px;
+    text-align: right;
 }
