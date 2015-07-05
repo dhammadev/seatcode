@@ -795,3 +795,13 @@ td {
     padding-top:10px;
     text-align: right;
 }
+
+.dialog {
+    background-color: #6FBFB1;
+}
+
+.confirm-button {
+    min-width: 20px;
+    border: 1px solid blue;
+    background-color;
+}

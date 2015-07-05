@@ -141,7 +141,7 @@
         -webkit-region-break-inside: avoid;
     }
 
-    .seatwalla-check, .seatwalla-pinall, .seatwalla-unpinall {
+    .seatwalla-check, .seatwalla-pinall, .seatwalla-unpinall, .seatwalla-flip, .seatwalla-unflip, .seatwalla-undo {
         display: none;
     }
 

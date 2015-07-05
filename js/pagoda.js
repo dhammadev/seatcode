@@ -21,7 +21,7 @@
         "67": "6, 7",
         "89": "8, 9"
     };
-    var language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
+    var language = localStorage["seatwalla_language"] || "ENGLISH";
     var Pagodawalla = function(el, options) {
 
         options = options instanceof Object ? options : {};
@@ -88,7 +88,7 @@
         sharedCellQueryTemplate: _.template("<div class='pagoda-shared-cell-questionaire'>" +
                                             "<span class='pagoda-shared-cell-question'>" +
                                             translation[language].PAGODA_SHARE_CELL +
-                                            //"Do you want to share the cell?" +
+                                                //"Do you want to share the cell?" +
                                             "</span>" +
 
                                             "<div class='pagoda-shared-cell-options'>" +
@@ -204,7 +204,7 @@
 
     Pagodawalla.prototype.init = function() {
         var pagodawalla = this;
-        language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
+        language = localStorage["seatwalla_language"] || "ENGLISH";
 
         pagodawalla.initCenterList();
 
@@ -313,7 +313,6 @@
                         return false;
                     }
                 });
-
 
             }
             else {
@@ -535,13 +534,13 @@
 
         if (label.length > 0) {
             var student;
+
             if (isShared) {
                 $cellToDelete = $cell; //$target.closest(".pagoda-shared-cell");
                 var deleteLabel = $cellToDelete.attr("data-label");
 
                 var deletedStudent = pagodawalla.getStudentWithLabel(deleteLabel);
                 console.log("delete " + deletedStudent.firstName);
-
 
                 var sharedCells = $pagodaCell.find(".pagoda-shared-cell-content");
                 if (sharedCells.length == 2) {
@@ -590,9 +589,9 @@
 
             pagodawalla.removeFromPrintList(student);
             pagodawalla.removeFromMasterList(student);
+
         }
-    }
-    ;
+    };
 
     Pagodawalla.prototype.updateCell = function(student) {
         var pagodawalla = this;
@@ -731,7 +730,7 @@
                     table += "";
                 }
                 else {
-                    if (student.share  == "None") {
+                    if (student.share == "None") {
                         table += options.chitTemplateOld({student: student});
                     }
                     else {
@@ -793,7 +792,7 @@
 
         existingStudent.time = timeMappings[existingStudent.share];
         var $sharedCell = $(options.pagodaSharedCellTemplate({cell: cell, student: existingStudent}));
-       // $sharedCell.css({ width: options.cellWidth + "%"});
+        // $sharedCell.css({ width: options.cellWidth + "%"});
         $pagodaCell.append($sharedCell);
 
         var $seat = $(".seatwalla-cell[data-label='" + existingStudent.label + "']");
@@ -805,7 +804,7 @@
 
         student.time = timeMappings[student.share];
         var $cell = $(options.pagodaSharedCellTemplate({cell: cell, student: student}));
-       // $cell.css({ width: options.cellWidth + "%"});
+        // $cell.css({ width: options.cellWidth + "%"});
 
         if (student.share == "AM" || student.share == "67") {
             $pagodaCell.prepend($cell);
@@ -830,20 +829,25 @@
 
     Pagodawalla.prototype.clearPrintList = function() {
         var pagodawalla = this;
-        var $chitView = $(".pagoda-chit-print");
-        $chitView.empty();
+        var r = confirm(translation[language].CONFIRM_CLEAR_PRINT_LIST);
+        if (r == true) {
+            printList = [];
+            var $chitView = $(".pagoda-chit-print");
+            $chitView.empty();
+        }
 
-     /*   printList = [];
-        var $chitView = $(".pagoda-chit-print");
-        var $tableChitView = $(".pagoda-chit-print table");
-        $tableChitView.css("display", "none");
-        var chitHtml = $chitView.html();
-        $chitView.empty();
-        $(".pagoda").append("<div class='pagoda-chit-previous'>Previous</div>");
-        $(".pagoda-chit-previous").append($(chitHtml));
-        $(".pagoda-chit-previous").bind("click", function(){
-            pagodawalla.showPreviousList();
-        });*/
+
+        /*   printList = [];
+         var $chitView = $(".pagoda-chit-print");
+         var $tableChitView = $(".pagoda-chit-print table");
+         $tableChitView.css("display", "none");
+         var chitHtml = $chitView.html();
+         $chitView.empty();
+         $(".pagoda").append("<div class='pagoda-chit-previous'>Previous</div>");
+         $(".pagoda-chit-previous").append($(chitHtml));
+         $(".pagoda-chit-previous").bind("click", function(){
+         pagodawalla.showPreviousList();
+         });*/
     };
 
     Pagodawalla.prototype.showPreviousList = function() {
@@ -901,7 +905,7 @@
             pagodawalla.updateStudentList(options);
         }
         else if (method == "cancelAssignment") {
-            pagodawalla.cancelAssignment(options.$cell);
+            pagodawalla.cancelAssignment(options.$cell, options.justInPagoda);
         }
     };
 

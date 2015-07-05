@@ -1,6 +1,6 @@
 var module = (function() {
     var returnStrings = {};
-    var language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
+    var language = localStorage["seatwalla_language"] || "ENGLISH";
 
     var placeHolder = {
         firstName: translation[language].PLACEHOLDER_FIRST_NAME,
@@ -13,7 +13,7 @@ var module = (function() {
 
     var htmlText = function(lang) {
         var data = {};
-        if (lang === "ENGLISH" || lang === "VIETNAMESE") {
+        if (lang === "ENGLISH" || lang === "VIETNAMESE" || lang === "SPANISH" || lang === "PORTUGUESE") {
             data =  translation[lang];
         }
         else {

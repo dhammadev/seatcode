@@ -8,14 +8,31 @@
 
 (function($) {
 
-    var language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
-    var confirmTemplate = _.template("<div class='confirm'>" +
+    var language = localStorage["seatwalla_language"] || "ENGLISH";
+    var confirmTemplate = _.template("<div class='dialog confirm'>" +
                                      "<div><%=message%></div>" +
                                      "<div class='confirm-buttons'>" +
                                      "<input class='confirm-yes' type='button' value='Yes' /> " +
                                      "<input class='confirm-no' type='button' value='No'/>" +
                                      "</div>" +
                                      "</div>");
+
+    var confirmDeleteTemplate = _.template("<div class='confirm dialog'>" +
+                                           "<div class='message1'>" +
+                                           "<div><%=deleteMessage%></div>" +
+                                           "<div class='confirm-buttons'>" +
+                                           "<input class='confirm-button confirm-yes one' type='button' value='Yes' /> " +
+                                           "<input class='confirm-button confirm-no one' type='button' value='No'/>" +
+                                           "</div>" +
+                                           "</div>" +
+                                           "<div class='dialog message2 hidden'>" +
+                                           "<div><%=pagodaDeleteMessage%></div>" +
+                                           "<div class='confirm-buttons'>" +
+                                           "<input class='confirm-button confirm-yes two' type='button' value='Yes' /> " +
+                                           "<input class='confirm-button confirm-no two' type='button' value='No'/>" +
+                                           "</div>" +
+                                           "</div>" +
+                                           "</div>");
 
     var Seatwalla = function(el, options) {
         options = options instanceof Object ? options : {};
@@ -33,12 +50,13 @@
         seatHeight: 100,
         widthUnits: "%",
         enableUndo: false,
-        docounter: 0
+        docounter: 0,
+        studentJustInPagoda: []
     };
 
     Seatwalla.prototype.init = function() {
         var seatwalla = this;
-        language = localStorage.getItem["seatwalla_language"] || "ENGLISH";
+        language = localStorage["seatwalla_language"] || "ENGLISH";
 
         $(".seatwalla-help").click(function() {
             $(".seatwalla-help-content").show();
@@ -534,6 +552,7 @@
 
     Seatwalla.prototype.addEvents = function($hall, $seat, data) {
         var seatwalla = this;
+        var language = localStorage["seatwalla_language"] || "ENGLISH";
         var options = seatwalla.options;
         var index = parseInt($seat.attr("data-index"));
         $seat.css({
@@ -674,31 +693,45 @@
         });
 
         $delete.click(function(event) {
-            var r = confirm(translation[language].CONFRIM_SEAT_DELETE);
-            if (r == true) {
+            var deleteMessage = translation[language].CONFIRM_SEAT_DELETE;
+            var pagodaDeleteMessage = translation[language].CONFIRM_DELETE_FROM_PAGODA;
+
+            var $confirm = $(confirmDeleteTemplate({deleteMessage: deleteMessage, pagodaDeleteMessage: pagodaDeleteMessage}));
+            $("body").append($confirm);
+            $(".confirm-yes.one").bind("click", function() {
+                var isSpace = $seat.attr("data-space");
+                if (seatwalla.isPagodaAvailable() && (data.student.num != "0") && isSpace != "true") {
+                    $(".message1").addClass("hidden");
+                    $(".message2").removeClass("hidden");
+                    $(".confirm-yes.two").bind("click", function() {
+                        seatwalla.do();
+                        seatwalla.deleteSeat(event, true, data.student);
+                        $("body").find(".confirm").remove();
+                    });
+                    $(".confirm-no.two").bind("click", function() {
+                        data.student.cell = data.student.cell || "";
+                        data.student.label = "NA" + options.studentJustInPagoda.length;
+                        options.studentJustInPagoda.push(data.student);
+                        seatwalla.do();
+                        seatwalla.deleteSeat(event, false, data.student);
+                        $("body").find(".confirm").remove();
+                    });
+                }
+                else {
+                    seatwalla.do();
+                    seatwalla.deleteSeat(event, false, data.student);
+                    $("body").find(".confirm").remove();
+                }
+            });
+
+            $(".confirm-no.one").bind("click", function() {
                 $("body").find(".confirm").remove();
-                var message = translation[language].CONFIRM_DELETE_FROM_PAGODA;
-                var $confirm = $(confirmTemplate({message: message}));
-                $("body").append($confirm);
-                var position = $(event.target).closest(".seatwalla-seat").position();
-                $(".confirm").css({top: position.top + 20, left: position.left + 20});
+            });
 
-
-                var confirmDeleteFromPagoda = false;
-                $(".confirm-yes").bind("click", function() {
-                    $("body").find(".confirm").remove();
-                    seatwalla.do();
-                    seatwalla.deleteSeat(event, true);
-                });
-                $(".confirm-no").bind("click", function() {
-                    $("body").find(".confirm").remove();
-                    seatwalla.do();
-                    seatwalla.deleteSeat(event, false);
-                });
-
-
-            }
+            var position = $(event.target).closest(".seatwalla-seat").position();
+            $(".confirm").css({top: position.top + 20, left: position.left + 20});
         });
+
         $pin.click(function(event) {
             seatwalla.do();
             seatwalla.pinSeat(event, data);
@@ -881,7 +914,7 @@
         });
     };
 
-    Seatwalla.prototype.deleteSeat = function(event, deleteFromPagoda) {
+    Seatwalla.prototype.deleteSeat = function(event, deleteFromPagoda, student) {
         var seatwalla = this;
         var options = seatwalla.options;
         var target = $(event.target);
@@ -891,16 +924,25 @@
 
         var label = $seat.attr("data-label");
 
-        var cell = parseInt($seat.find(".seatwalla-cell").text().split(" ")[0]);
+        if (seatwalla.isPagodaAvailable()) {
+            var cell = parseInt($seat.find(".seatwalla-cell").text().split(" ")[0]);
 
-        if (deleteFromPagoda) {
             var $cell = $(".pagoda-shared-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
             if ($cell.length == 0) {
                 $cell = $(".pagoda-cell-content[data-cell='" + cell + "'][data-label='" + label + "']");
             }
 
             if ($cell.length > 0) {
-                options.$pagoda.cancelAssignment($cell);
+                var opt = {};
+                opt.$cell = $cell;
+
+                if (deleteFromPagoda) {
+                    options.$pagoda.cancelAssignment($cell);
+                }
+                else {
+                    $cell.attr("data-label", student.label);
+                    $cell.find(".seatwalla-label").text(student.label);
+                }
             }
         }
 
@@ -1162,6 +1204,11 @@
         return seatwalla.move(index, newIndex, check);
     };
 
+    Seatwalla.prototype.isPagodaAvailable = function() {
+        var options = this.options;
+        return _.has(pagodaData, options.centerName);
+    };
+
     Seatwalla.prototype.isSpace = function($seat) {
         var seatwalla = this;
         var space = $seat.attr("data-space");
@@ -1223,6 +1270,7 @@
         var options = seatwalla.options;
         options.$pagoda = $pagoda;
         var data = seatwalla.extractData(false, true);
+        data = _.union(options.studentJustInPagoda, data);
         var pOptions = _.extend(options, {studentData: data});
 
         //_.extend(options, seatwalla.options);
