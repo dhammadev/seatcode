@@ -796,10 +796,6 @@ td {
     text-align: right;
 }
 
-.dialog {
-    background-color: #6FBFB1;
-}
-
 .confirm-button {
     min-width: 20px;
     border: 1px solid blue;
