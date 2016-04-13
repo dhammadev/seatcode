@@ -90,7 +90,6 @@
         var files = $("#files").get(0).files;
 
         if (!files.length) {
-
             alert(translation[language].ALERT_SELECT_FILE);
             return;
         }
@@ -1730,7 +1729,7 @@
         var seatwalla = this;
         seatwalla.do();
         seatwalla.options.enableUndo = false;
-        $(".seatwalla-seat[data-pin='false']").find(".seatwalla-pin").click();
+        $(".seatwalla-seat[data-pin='false'][data-space='false']").find(".seatwalla-pin").click();
         seatwalla.options.enableUndo = true;
 
     };
@@ -1739,7 +1738,7 @@
         var seatwalla = this;
         seatwalla.do();
         seatwalla.options.enableUndo = false;
-        $(".seatwalla-seat[data-pin='true']").find(".seatwalla-pin").click();
+        $(".seatwalla-seat[data-pin='true'][data-space='false']").find(".seatwalla-pin").click();
         seatwalla.options.enableUndo = true;
     };
 

@@ -5,19 +5,18 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>SeatWalla</title>
-<link rel="stylesheet" href="css/pictonic.css">
-<link rel="stylesheet" href="font/pictonic.woff">
-<link rel="stylesheet" href="css/seatwalla.css">
-<link rel="stylesheet" href="css/print.css" media="print">
+<link rel="stylesheet" href="pictonic.css">
+<link rel="stylesheet" href="pictonic.woff">
+<link rel="stylesheet" href="seatwalla.css">
+<link rel="stylesheet" href="print.css" media="print">
 <script src="jquery.js"></script>
-<script src="js/seatwallaCookie.js"></script>
-<script src="js/browserDetection.js"></script>
-<script src="js/translation.js"></script>
-<script src="js/text.js"></script>
-<script src="js/underscore.js"></script>
-<script src="js/pagodaData.js"></script>
-<script src="js/pagoda.js"></script>
-<script src="js/seatwalla.js"></script>
+<script src="browserDetection.js"></script>
+<script src="translation.js"></script>
+<script src="text.js"></script>
+<script src="underscore.js"></script>
+<script src="pagodaData.js"></script>
+<script src="pagoda.js"></script>
+<script src="seatwalla.js"></script>
 <script>
 var gender = "male";
 var pagodaInitialized = false;
@@ -33,29 +32,35 @@ function onload(langChanged) {
     }
     else {
 
-        /* if (!langChanged) {
-         var templateLang = _.template($("script.template_language").html());
-         $(".seatwalla-language").empty();
+        if ($(".seatwalla-hall").children().length > 1) {
+            reload();
+        }
+        else {
 
-         $(".seatwalla-language").append(
-         templateLang(module.data(language))
-         );
-         }*/
+            /* if (!langChanged) {
+             var templateLang = _.template($("script.template_language").html());
+             $(".seatwalla-language").empty();
 
-        var template = _.template(
-                $("script.template").html()
-        );
-        // var seatwallaRegion = $(".seatwalla-region");
-        /*   if (seatwallaRegion.length() > 1) {
-         $(".seatwalla-region").empty();
-         }
-         else {
-         $("body").append('<div class="seatwalla-region"></div>');
-         }*/
-        $("body").empty();
-        $("body").append(
-                template(module.data(language))
-        );
+             $(".seatwalla-language").append(
+             templateLang(module.data(language))
+             );
+             }*/
+
+            var template = _.template(
+                    $("script.template").html()
+            );
+            // var seatwallaRegion = $(".seatwalla-region");
+            /*   if (seatwallaRegion.length() > 1) {
+             $(".seatwalla-region").empty();
+             }
+             else {
+             $("body").append('<div class="seatwalla-region"></div>');
+             }*/
+            $("body").empty();
+            $("body").append(
+                    template(module.data(language))
+            );
+        }
     }
 
     // var language = cookie.getCookie("seatwalla-language") || "ENGLISH";
@@ -217,7 +222,8 @@ function showPagoda(event) {
     $(".pagoda-table-view").show();
     $(".pagoda-flip-controls").show();
     $(".pagoda-levels").show();
-};
+}
+;
 
 function showSeating(event) {
     var $hall = $(".hall");
@@ -227,7 +233,8 @@ function showSeating(event) {
     $pagodaContainer.hide();
     var $seat = $(".seatwalla-container");
     $seat.data("seatwalla").execute("startUndo");
-};
+}
+;
 
 function showChits(event) {
     var $pagodaContainer = $(".pagoda-chart-container");
@@ -243,7 +250,6 @@ function showChits(event) {
 
     var $pagoda = $(".pagoda-container");
     $pagoda.data("pagoda").execute("showChits");
-
 
     $(".pagoda-pagoda-view").show();
     $(".pagoda-clear-print-list").show();
@@ -265,7 +271,6 @@ function showTable(event) {
     $tableView.show();
     var $pagoda = $(".pagoda-container");
     $pagoda.data("pagoda").execute("showTable");
-
 
     $(".pagoda-pagoda-view").show();
     $(".pagoda-clear-print-list").hide();
@@ -294,6 +299,7 @@ function selectGender(gender) {
     this.gender = gender;
 }
 ;
+
 </script>
 
 </head>
@@ -308,11 +314,13 @@ function selectGender(gender) {
             <%if(language === "VIETNAMESE"){%>selected <%}%> ><%=HALL_VIETNAMESE%></option>
             <option value="SPANISH"
             <%if(language === "SPANISH"){%>selected<%} %> ><%=HALL_SPANISH%></option>
+            <option value="PORTUGUESE"
+            <%if(language === "PORTUGUESE"){%>selected<%} %> ><%=HALL_PORTUGUESE%></option>
         </select>
     </div>
 
     <div class="seatwalla-h1"><%=HALL_SEATWALLA%></div>
-    <div class="seatwalla-h2">Version 2014-12-27</div>
+    <div class="seatwalla-h2">Version 2016-04-03</div>
     <div class="seatwalla-h2"><%=HALL_CONTACT%> <a href="mailto:seatwalla-na@at.dhamma.org">
         seatwalla-na@at.dhamma.org</a></div>
     <div class="seatwalla-h2"><%=HALL_EMAIL_TO%>
@@ -392,13 +400,14 @@ function selectGender(gender) {
         <button class="seatwalla-unpinall hidden" onclick="unpinAll()"><%=HALL_UNPIN_ALL%></button>
         <button class="seatwalla-flip"><%=HALL_FLIP%></button>
         <button class="seatwalla-unflip hidden"><%=HALL_UNFLIP%></button>
-        <button class="seatwalla-undo"><%=HALL_UNDO%></button><!--
-        <input type="text" class="seatwalla-teachers-name" placeholder="<%=HALL_AT_NAME%>"/>
-        <span><%=HALL_FROM%></span>
-        <input type="text" class="seatwalla-course-date-from" placeholder="<%=HALL_FROM_DATE%>"/>
-        <span><%=HALL_TO%></span>
-        <input type="text" class="seatwalla-course-date-to" placeholder="<%=HALL_TO_DATE%>"/>
--->
+        <button class="seatwalla-undo"><%=HALL_UNDO%></button>
+        <!--
+                <input type="text" class="seatwalla-teachers-name" placeholder="<%=HALL_AT_NAME%>"/>
+                <span><%=HALL_FROM%></span>
+                <input type="text" class="seatwalla-course-date-from" placeholder="<%=HALL_FROM_DATE%>"/>
+                <span><%=HALL_TO%></span>
+                <input type="text" class="seatwalla-course-date-to" placeholder="<%=HALL_TO_DATE%>"/>
+        -->
         <button class="seatwalla-assign-cell" onclick="assignCells()"><%=HALL_ASSIGN_PAGODA%></button>
         <button class='seatwalla-help'><%=HALL_INSTRUCTIONS%></button>
     </div>
@@ -493,12 +502,12 @@ function selectGender(gender) {
         </b>
     </p>
     <p align="center">
-        <img border="0" src="img/Seatwalla1.gif" width="493" height="177">
+        <img border="0" src="Seatwalla1.gif" width="493" height="177">
     </p>
     <p align="center"><%=SEATWALLA_FIG_1%></p>
     <p>&nbsp;</p>
     <p align="center">
-        <img border="0" src="img/Seatwalla2.gif" width="534" height="157">
+        <img border="0" src="Seatwalla2.gif" width="534" height="157">
     </p>
     <p align="center"><%=SEATWALLA_FIG_2%></p>
     <p>&nbsp;</p>
