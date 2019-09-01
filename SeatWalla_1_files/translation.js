@@ -130,8 +130,8 @@ var translation = {
 
         //New Strings
         CONFIRM_CLEAR_PRINT_LIST: "Are you sure you want to clear the print list? Please print out the chits before clearing. Use 'Paper Size' 'US Letter' to print properly",
-        PAGODA_SHOW_PRINT_LIST: "Show Chits Again",
-        PAGODA_NEW_STUDENT_ORIENTATION_TIME: "Please enter the pagoda oritentation time and press enter "
+        PAGODA_SHOW_PRINT_LIST: "Show Chits Again"
+
     },
     VIETNAMESE: {
         DHAMMA_REG_SITE: "https://asia.dhammareg.dhamma.org:7500/site/login",

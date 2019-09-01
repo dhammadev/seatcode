@@ -3,6 +3,7 @@ Features
 - Added support for Dhamma Torana Pagoda
 - Changed SVC Pagoda to reflect new numbers
 - Fixed the problem of saving in different folder by flattening the whole file structure
+
 2015_07_08
 - Error message when opened in Safari to prevent people from opening in not supported browsers.
 - Language support for Vietnamese, Portuguese & Spanish. Thanks to all the people who helped translating

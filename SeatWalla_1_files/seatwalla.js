@@ -136,20 +136,11 @@
                             }
                             else {
                                 data[i]["old"] = false;
-                            }                        
+                            }
+                        }
 
-                            if (stdData.length > 3) {
-                                data[i]["room"] = stdData[3];
-                                if (stdData[3].substring(0,1) == "\"") {
-                                    data[i]["room"] = stdData[3].substring(1, stdData[3].length - 1);
-                                }
-                            }
-                            if (stdData.length > 4) {
-                                data[i]["commlang"] = stdData[4];
-                                if (stdData[3].substring(0,1) == "\"") {
-                                    data[i]["commlang"] = stdData[4].substring(1, stdData[4].length - 1);
-                                }
-                            }
+                        if (stdData.length > 3) {
+                            //do more
                         }
                     }
                 }
@@ -508,10 +499,6 @@
                                               "<input class='seatwalla-seat-room-edit' type='text' placeholder='<%=placeHolder.room%>'  maxlength='10' value='<%=student.room%>' editable='true'/>" +
 
                                               "<div class='seatwalla-seat-text'><%=student.text%></div>" +
-                                              "<% if(space && student.commlang == null){%>" +
-                                              "<%} else {%>" +
-                                              "<div class='seatwalla-commlang'><%=student.commlang%></div>" +
-                                              "<%}%>" +
                                               "<%}%>" +
                                               "<div>" +
                                               "</div>");
@@ -1313,7 +1300,7 @@
             $cell.attr("data-label", label);
             $cell.find(".seatwalla-label").text(label);
         }
-        else if ($cell.length >= 1) {
+        else if ($cell.length > 1) {
 
             for (var i = 0; i < $cell.length; i++) {
                 var $currentCell = $($cell[i]);
@@ -1485,6 +1472,7 @@
     Seatwalla.prototype.updateStudentList = function() {
         var seatwalla = this;
         seatwalla.extractData(false, true);
+
     };
 
     Seatwalla.prototype.getStudentFromIndex = function(index) {

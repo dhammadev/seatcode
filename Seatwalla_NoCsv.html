@@ -1,483 +1,523 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>SeatWalla</title>
-<link rel="stylesheet" href="pictonic.css">
-    <link rel="stylesheet" href="pictonic.woff">
-<link rel="stylesheet" href="seatwalla.css">
-<link rel="stylesheet" href="print.css" media="print">
-<script src="jquery.js"></script>
-<script src="underscore.js"></script>
-<script src="pagodaData.js"></script>
-<script src="pagoda.js"></script>
-<script src="seatwalla.js"></script>
-<script>
-    var gender = "male";
-    var pagodaInitialized = false;
-    function onload() {
-
-        if ($(".seatwalla-hall").children().length > 1) {
-            reload();
-        }
-
-        var $pagoda = $(".pagoda-container");
-        $pagoda.pagoda();
-        $pagoda.data("pagoda").execute("init");
-    }
-    ;
-
-    function showFirstPage() {
-        $(".seatwalla-container").show();
-        $(".seatwalla-hall").hide();
-        $(".seatwalla-hall").empty();
-        //$(".seatwalla-tools-tray").hide();
-
-    }
-    ;
-
-    function continueEditing() {
-        //$(".seatwalla-tools-tray").hide();
-    }
-    ;
-
-    function reload() {
-        var $seat = $(".seatwalla-container");
-        $seat.seat();
-        $seat.data("seatwalla").reload();
-
-        $(".seatwalla-pinall").removeClass("hidden");
-        $(".seatwalla-unpinall").addClass("hidden");
-    };
-
-    function init(event) {
-        var $seat = $(".seatwalla-container");
-        $seat.seat();
-    };
-
-    function showEmptyChart(event) {
-        init();
-        var $seat = $(".seatwalla-container");
-        var options = {};
-        options.numCols = $(".seatwalla-cols").val();
-        options.numRows = $(".seatwalla-rows").val();
-        options.gender = $('input[name="sex"]:checked').val();
-        options.seatStyle = $('input[name="seatStyle"]:checked').val();
-        options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
-        var seatwalla = $seat.data("seatwalla");
-
-        $seat.data("seatwalla").execute("showEmptyChart", options);
-        $(".seatwalla-hall").show();
-        $(".seatwalla-course-info").show();
-    }
-    ;
-
-    function saveData(event) {
-        var $seat = $(".seatwalla-container");
-        var options = {};
-        options.numCols = $(".seatwalla-cols").val();
-        options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
-        $seat.data("seatwalla").writeToFile("saveData", options);
-    }
-    ;
-
-    function assignCells(event) {
-        var $pagoda = $(".pagoda-container");
-        if (!pagodaInitialized) {
-
-            $pagoda.pagoda();
-            $pagoda.data("pagoda").execute("init");
-
-            var $seat = $(".seatwalla-container");
-            $seat.seat();
-            $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
-            $(".seatwalla-course-info").hide();
-            $(".seatwalla-hall").hide();
-            pagodaInitialized = true;
-        }
-        else {
-            $pagoda.show();
-            showPagoda(event);
-            var $seat = $(".seatwalla-container");
-            $(".seatwalla-course-info").hide();
-            $(".seatwalla-hall").hide();
-            $seat.data("seatwalla").execute("assignCells", {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
-
-        }
-    }
-    ;
-
-    function check(event) {
-        var $seat = $(".seatwalla-container");
-        $seat.seat();
-        $seat.data("seatwalla").execute("check");
-    }
-    ;
-
-    function pinAll() {
-        var $seat = $(".seatwalla-container");
-        $seat.seat();
-
-        $(".seatwalla-pinall").addClass("hidden");
-        $(".seatwalla-unpinall").removeClass("hidden");
-
-        $seat.data("seatwalla").execute("pinAll");
-
-    }
-    ;
-
-    function unpinAll() {
-        var $seat = $(".seatwalla-container");
-        $seat.seat();
-
-        $(".seatwalla-pinall").removeClass("hidden");
-        $(".seatwalla-unpinall").addClass("hidden");
-
-        $seat.data("seatwalla").execute("unpinAll");
-    }
-    ;
-
-    function showPagoda(event) {
-        var $pagodaContainer = $(".pagoda-chart-container");
-        $pagodaContainer.children().show();
-        $pagodaContainer.show();
-
-        var $chitView = $(".pagoda-chit-print");
-        $chitView.hide();
-
-        var $tableView = $(".pagoda-table-print");
-        $tableView.hide();
-    }
-    ;
-
-    function showSeating(event) {
-        var $hall = $(".hall");
-        var $pagodaContainer = $(".pagoda-container");
-        $hall.children().show();
-        $hall.show();
-        $pagodaContainer.hide();
-            var $seat = $(".seatwalla-container");
-            $seat.data("seatwalla").execute("startUndo");
-        };
-
-
-    function showChits(event) {
-        var $pagodaContainer = $(".pagoda-chart-container");
-        $pagodaContainer.hide();
-
-        var $studentList = $(".pagoda-student-list-container");
-        $studentList.hide();
-
-        var $chitView = $(".pagoda-chit-print");
-        $chitView.show();
-        var $tableView = $(".pagoda-table-print");
-        $tableView.hide();
-
-        var $pagoda = $(".pagoda-container");
-        $pagoda.data("pagoda").execute("showChits");
-    }
-    ;
-
-    function showTable(event) {
-        var $pagodaContainer = $(".pagoda-chart-container");
-        $pagodaContainer.hide();
-        var $studentList = $(".pagoda-student-list-container");
-        $studentList.hide();
-        var $chitView = $(".pagoda-chit-print");
-        $chitView.hide();
-        var $tableView = $(".pagoda-table-print");
-        $tableView.show();
-        var $pagoda = $(".pagoda-container");
-        $pagoda.data("pagoda").execute("showTable");
-    }
-    ;
-
-    function showFloor() {
-        var $pagoda = $(".pagoda-container");
-        var floorSelected = $(".pagoda-levels-select").val();
-        $pagoda.data("pagoda").execute("showFloor", floorSelected);
-
-    }
-    ;
-
-    function clearPrintList() {
-        var $pagoda = $(".pagoda-container");
-        $pagoda.data("pagoda").execute("clearPrintList");
-    }
-    ;
-
-    function selectGender(gender) {
-        this.gender = gender;
-    }
-    ;
-
-</script>
-
-</head>
-<body onload="onload()">
-
-<div class="seatwalla-container">
-    <div class="seatwalla-h1">SeatWalla</div>
-    <div class="seatwalla-h2">Version 2014-06-24</div>
-    <div class="seatwalla-h2">Contact <a href="mailto:seatwalla-na@at.dhamma.org"> seatwalla-na@at.dhamma.org</a></div>
-    <div class="seatwalla-h2">Email list: Join user list by sending email to
-        <a href="mailto:seatwalla-na-users-subscribe@at.dhamma.org">seatwalla-na-users-subscribe@at.dhamma.org</a>
-    </div>
-
-
-    <div class="seatwalla-step-text">STEP 1</div>
-    <div class="seatwall-step">
-        <div class="seatwalla-step">Choose Gender</div>
-        <form class="seatwalla-step">
-            <input type="radio" name="sex" value="male" checked>
-            Male
-            <br>
-            <input type="radio" name="sex" value="female">
-            Female
-        </form>
-    </div>
-
-    <div class="seatwalla-step-text">STEP 2</div>
-    <div class="seatwall-step">
-        <div class="seatwalla-step">Number of cushions in a row</div>
-        <form class="seatwalla-step">
-            <input class="seatwalla-cols" type="text" name="numCols" value="10">
-        </form>
-    </div>
-
-    <div class="seatwalla-step-text">STEP 3</div>
-    <div class="seatwall-step">
-        <div class="seatwalla-step">Number of rows</div>
-        <form class="seatwalla-step">
-            <input class="seatwalla-rows" type="text" name="numRows" value="10">
-        </form>
-    </div>
-
-    <div class="seatwalla-step-text">STEP 4</div>
-    <div class="seatwall-step">
-        <div class="seatwalla-step">Add back and side rows</div>
-        <form class="seatwalla-step">
-            <input class="seatwalla-add-back-side-rows" type="checkbox" name="addSideBackRows" checked="true">
-        </form>
-    </div>
-
-    <div class="seatwalla-step-text">STEP 5</div>
-    <div class="seatwall-step">
-        <div class="seatwalla-step">Choose Seating Labels</div>
-        <form class="seatwalla-step">
-            <input type="radio" name="seatStyle" value="Theatre" checked>
-            Theater
-            <br>
-            <input type="radio" name="seatStyle" value="Number">
-            Sequential
-        </form>
-    </div>
-
-    <div class="seatwalla-step">
-        <button class="seatwalla-step seatwalla-show-chart" type="button" onclick="showEmptyChart()">Show Chart
-        </button>
-    </div>
-
-</div>
-
-<div class="hall">
-    <div class="seatwalla-course-info">
-        <button class='seatwalla-help'>Instructions</button>
-        <button class="seatwalla-check" onclick="check()">Check</button>
-        <button class="seatwalla-pinall" onclick="pinAll()">Pin All</button>
-        <button class="seatwalla-unpinall hidden" onclick="unpinAll()">Unpin All</button>
-        <button class="seatwalla-flip">Flip</button>
-        <button class="seatwalla-unflip hidden">Unflip</button>
-        <button class="seatwalla-undo">Undo</button>
-        <input type="text" class="seatwalla-teachers-name" placeholder="AT Name"/>
-        <span>From:</span>
-        <input type="text" class="seatwalla-course-date-from" placeholder="From Date"/>
-        <span>To:</span>
-        <input type="text" class="seatwalla-course-date-to" placeholder="To Date"/>
-
-        <button class="seatwalla-assign-cell" onclick="assignCells()">Assign Pagoda Cells</button>
-        <!--<span class="pagoda-assign-cell-link" onclick="assignCells()">Assign Pagoda Cells</span>-->
-    </div>
-
-    <div class="seatwalla-hall">
-    </div>
-
-</div>
-<!--
-
-        <div class="seatwalla-tools-tray">
-            <button class="seatwalla-button seatwalla-start" type="button" onclick="showFirstPage()"> Start Again</button>
-            <button class="seatwalla-button seatwalla-resume" type="button" onclick="continueEditing()"> Continue</button>
-
-        </div>-->
-<div class="seat-data">
-    <span class="seatwalla-hidden-info" id="numCols"></span>
-    <span class="seatwalla-hidden-info" id="addSideBackRows"></span>
-    <span class="seatwalla-hidden-info" id="gender"></span>
-    <span class="seatwalla-hidden-info" id="seatStyle"></span>
-    <span class="seatwalla-hidden-info" id="centerName"></span>
-    <textarea class="seatwalla-notes-detail"></textarea>
-</div>
-
-<div class="pagoda-container">
-    <div class="pagoda-controls">
-        <button class='pagoda-help'>Instructions</button>
-        <div class="pagoda-levels">
-            <select class="pagoda-levels-select" onchange="showFloor()" value="3">
-                <option value="3">All</option>
-                <option value="0">Top</option>
-                <option value="1">Ground</option>
-                <option value="2">Basement</option>
-            </select>
-        </div>
-
-        <div class="pagoda-back-to-seating">
-            <button class="pagoda-back-to-seating" onclick="showSeating()">Back to Seating</button>
-
-        </div>
-
-        <div class="pagoda-pagoda-view">
-            <button onclick="showPagoda()">Show Pagoda</button>
-
-        </div>
-
-        <div class="pagoda-chit-view">
-            <button onclick="showChits()">Show Chits</button>
-
-        </div>
-
-        <div class="pagoda-table-view">
-            <button onclick="showTable()">Show Table</button>
-
-        </div>
-
-        <div class="pagoda-clear-print-list">
-            <button onclick="clearPrintList()">Clear Print List</button>
-        </div>
-
-        <button class="pagoda-flip">Flip</button>
-        <button class="pagoda-unflip hidden">UnFlip</button>
-    </div>
-
-    <div class="pagoda">
-        <div class="pagoda-chart-container">
-            <div class="pagoda-chart">
-
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>SeatWalla</title>
+        <link rel="stylesheet" href="pictonic.css">
+        <link rel="stylesheet" href="pictonic.woff">
+        <link rel="stylesheet" href="seatwalla.css">
+        <link rel="stylesheet" href="print.css" media="print">
+        <script src="jquery.js"></script>
+        <script src="browserDetection.js"></script>
+        <script src="translation.js"></script>
+        <script src="text.js"></script>
+        <script src="underscore.js"></script>
+        <script src="pagodaData.js"></script>
+        <script src="pagoda.js"></script>
+        <script src="seatwalla.js"></script>
+
+        <script>
+            var gender = "male";
+            var pagodaInitialized = false;
+            function onload() {
+
+                if ($(".seatwalla-hall").children().length > 1) {
+                    reload();
+                }
+
+                var $pagoda = $(".pagoda-container");
+                $pagoda.pagoda();
+                $pagoda.data("pagoda").execute("init");
+            }
+            ;
+
+            function showFirstPage() {
+                $(".seatwalla-container").show();
+                $(".seatwalla-hall").hide();
+                $(".seatwalla-hall").empty();
+                //$(".seatwalla-tools-tray").hide();
+
+            }
+            ;
+
+            function continueEditing() {
+                //$(".seatwalla-tools-tray").hide();
+            }
+            ;
+
+            function reload() {
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+                $seat.data("seatwalla").reload();
+
+                $(".seatwalla-pinall").removeClass("hidden");
+                $(".seatwalla-unpinall").addClass("hidden");
+            }
+            ;
+
+            function init(event) {
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+            }
+            ;
+
+            function showEmptyChart(event) {
+                init();
+                var $seat = $(".seatwalla-container");
+                var options = {};
+                options.numCols = $(".seatwalla-cols").val();
+                options.numRows = $(".seatwalla-rows").val();
+                options.gender = $('input[name="sex"]:checked').val();
+                options.seatStyle = $('input[name="seatStyle"]:checked').val();
+                options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
+                var seatwalla = $seat.data("seatwalla");
+
+                $seat.data("seatwalla").execute("showEmptyChart", options);
+                $(".seatwalla-hall").show();
+                $(".seatwalla-course-info").show();
+            }
+            ;
+
+            function saveData(event) {
+                var $seat = $(".seatwalla-container");
+                var options = {};
+                options.numCols = $(".seatwalla-cols").val();
+                options.addSideBackRows = $(".seatwalla-add-back-side-rows").prop("checked");
+                $seat.data("seatwalla").writeToFile("saveData", options);
+            }
+            ;
+
+            function assignCells(event) {
+                var $pagoda = $(".pagoda-container");
+                if (!pagodaInitialized) {
+
+                    $pagoda.pagoda();
+                    $pagoda.data("pagoda").execute("init");
+
+                    var $seat = $(".seatwalla-container");
+                    $seat.seat();
+                    $seat.data("seatwalla").execute("assignCells",
+                            {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
+                    $(".seatwalla-course-info").hide();
+                    $(".seatwalla-hall").hide();
+                    pagodaInitialized = true;
+                }
+                else {
+                    $pagoda.show();
+                    showPagoda(event);
+                    var $seat = $(".seatwalla-container");
+                    $(".seatwalla-course-info").hide();
+                    $(".seatwalla-hall").hide();
+                    $seat.data("seatwalla").execute("assignCells",
+                            {$pagoda: $pagoda.data("pagoda"), init: !pagodaInitialized});
+
+                }
+            }
+            ;
+
+            function check(event) {
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+                $seat.data("seatwalla").execute("check");
+            }
+            ;
+
+            function pinAll() {
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+
+                $(".seatwalla-pinall").addClass("hidden");
+                $(".seatwalla-unpinall").removeClass("hidden");
+
+                $seat.data("seatwalla").execute("pinAll");
+
+            }
+            ;
+
+            function unpinAll() {
+                var $seat = $(".seatwalla-container");
+                $seat.seat();
+
+                $(".seatwalla-pinall").removeClass("hidden");
+                $(".seatwalla-unpinall").addClass("hidden");
+
+                $seat.data("seatwalla").execute("unpinAll");
+            }
+            ;
+
+            function showPagoda(event) {
+                var $pagodaContainer = $(".pagoda-chart-container");
+                $pagodaContainer.children().show();
+                $pagodaContainer.show();
+
+                var $chitView = $(".pagoda-chit-print");
+                $chitView.hide();
+
+                var $tableView = $(".pagoda-table-print");
+                $tableView.hide();
+            }
+            ;
+
+            function showSeating(event) {
+                var $hall = $(".hall");
+                var $pagodaContainer = $(".pagoda-container");
+                $hall.children().show();
+                $hall.show();
+                $pagodaContainer.hide();
+                var $seat = $(".seatwalla-container");
+                $seat.data("seatwalla").execute("startUndo");
+            }
+            ;
+
+            function showChits(event) {
+                var $pagodaContainer = $(".pagoda-chart-container");
+                $pagodaContainer.hide();
+
+                var $studentList = $(".pagoda-student-list-container");
+                $studentList.hide();
+
+                var $chitView = $(".pagoda-chit-print");
+                $chitView.show();
+                var $tableView = $(".pagoda-table-print");
+                $tableView.hide();
+
+                var $pagoda = $(".pagoda-container");
+                $pagoda.data("pagoda").execute("showChits");
+            }
+            ;
+
+            function showTable(event) {
+                var $pagodaContainer = $(".pagoda-chart-container");
+                $pagodaContainer.hide();
+                var $studentList = $(".pagoda-student-list-container");
+                $studentList.hide();
+                var $chitView = $(".pagoda-chit-print");
+                $chitView.hide();
+                var $tableView = $(".pagoda-table-print");
+                $tableView.show();
+                var $pagoda = $(".pagoda-container");
+                $pagoda.data("pagoda").execute("showTable");
+            }
+            ;
+
+            function showFloor() {
+                var $pagoda = $(".pagoda-container");
+                var floorSelected = $(".pagoda-levels-select").val();
+                $pagoda.data("pagoda").execute("showFloor", floorSelected);
+
+            }
+            ;
+
+            function clearPrintList() {
+                var $pagoda = $(".pagoda-container");
+                $pagoda.data("pagoda").execute("clearPrintList");
+            }
+            ;
+
+            function selectGender(gender) {
+                this.gender = gender;
+            }
+            ;
+
+        </script>
+
+    </head>
+    <body onload="onload()">
+
+        <div class="seatwalla-container">
+            <div class="seatwalla-h1">SeatWalla</div>
+            <div class="seatwalla-h2">Version 2014-06-24</div>
+            <div class="seatwalla-h2">Contact <a href="mailto:seatwalla-na@at.dhamma.org">
+                seatwalla-na@at.dhamma.org</a></div>
+            <div class="seatwalla-h2">Email list: Join user list by sending email to
+                <a href="mailto:seatwalla-na-users-subscribe@at.dhamma.org">seatwalla-na-users-subscribe@at.dhamma.org</a>
             </div>
-            <div class="pagoda-student-list-container">
-                <div class='pagoda-student-search'>
-                    <input class='pagoda-student-search-text' type='text' placeholder='First Name'/>
+
+            <div class="seatwalla-step-text">STEP 1</div>
+            <div class="seatwall-step">
+                <div class="seatwalla-step">Choose Gender</div>
+                <form class="seatwalla-step">
+                    <input type="radio" name="sex" value="male" checked>
+                    Male
+                    <br>
+                    <input type="radio" name="sex" value="female">
+                    Female
+                </form>
+            </div>
+
+            <div class="seatwalla-step-text">STEP 2</div>
+            <div class="seatwall-step">
+                <div class="seatwalla-step">Number of cushions in a row</div>
+                <form class="seatwalla-step">
+                    <input class="seatwalla-cols" type="text" name="numCols" value="10">
+                </form>
+            </div>
+
+            <div class="seatwalla-step-text">STEP 3</div>
+            <div class="seatwall-step">
+                <div class="seatwalla-step">Number of rows</div>
+                <form class="seatwalla-step">
+                    <input class="seatwalla-rows" type="text" name="numRows" value="10">
+                </form>
+            </div>
+
+            <div class="seatwalla-step-text">STEP 4</div>
+            <div class="seatwall-step">
+                <div class="seatwalla-step">Add back and side rows</div>
+                <form class="seatwalla-step">
+                    <input class="seatwalla-add-back-side-rows" type="checkbox" name="addSideBackRows" checked="true">
+                </form>
+            </div>
+
+            <div class="seatwalla-step-text">STEP 5</div>
+            <div class="seatwall-step">
+                <div class="seatwalla-step">Choose Seating Labels</div>
+                <form class="seatwalla-step">
+                    <input type="radio" name="seatStyle" value="Theatre" checked>
+                    Theater
+                    <br>
+                    <input type="radio" name="seatStyle" value="Number">
+                    Sequential
+                </form>
+            </div>
+
+            <div class="seatwalla-step">
+                <button class="seatwalla-step seatwalla-show-chart" type="button" onclick="showEmptyChart()">Show Chart
+                </button>
+            </div>
+
+        </div>
+
+        <div class="hall">
+            <div class="seatwalla-course-info">
+                <button class='seatwalla-help'>Instructions</button>
+                <button class="seatwalla-check" onclick="check()">Check</button>
+                <button class="seatwalla-pinall" onclick="pinAll()">Pin All</button>
+                <button class="seatwalla-unpinall hidden" onclick="unpinAll()">Unpin All</button>
+                <button class="seatwalla-flip">Flip</button>
+                <button class="seatwalla-unflip hidden">Unflip</button>
+                <button class="seatwalla-undo">Undo</button>
+                <input type="text" class="seatwalla-teachers-name" placeholder="AT Name"/>
+                <span>From:</span>
+                <input type="text" class="seatwalla-course-date-from" placeholder="From Date"/>
+                <span>To:</span>
+                <input type="text" class="seatwalla-course-date-to" placeholder="To Date"/>
+
+                <button class="seatwalla-assign-cell" onclick="assignCells()">Assign Pagoda Cells</button>
+                <!--<span class="pagoda-assign-cell-link" onclick="assignCells()">Assign Pagoda Cells</span>-->
+            </div>
+
+            <div class="seatwalla-hall">
+            </div>
+
+        </div>
+        <!--
+
+                <div class="seatwalla-tools-tray">
+                    <button class="seatwalla-button seatwalla-start" type="button" onclick="showFirstPage()"> Start Again</button>
+                    <button class="seatwalla-button seatwalla-resume" type="button" onclick="continueEditing()"> Continue</button>
+
+                </div>-->
+        <div class="seat-data">
+            <span class="seatwalla-hidden-info" id="numCols"></span>
+            <span class="seatwalla-hidden-info" id="addSideBackRows"></span>
+            <span class="seatwalla-hidden-info" id="gender"></span>
+            <span class="seatwalla-hidden-info" id="seatStyle"></span>
+            <span class="seatwalla-hidden-info" id="centerName"></span>
+            <textarea class="seatwalla-notes-detail"></textarea>
+        </div>
+
+        <div class="pagoda-container">
+            <div class="pagoda-controls">
+                <button class='pagoda-help'>Instructions</button>
+                <div class="pagoda-levels">
+                    <select class="pagoda-levels-select" onchange="showFloor()" value="3">
+                        <option value="3">All</option>
+                        <option value="0">Top</option>
+                        <option value="1">Ground</option>
+                        <option value="2">Basement</option>
+                    </select>
                 </div>
-                <div class="pagoda-student-list"></div>
+
+                <div class="pagoda-back-to-seating">
+                    <button class="pagoda-back-to-seating" onclick="showSeating()">Back to Seating</button>
+
+                </div>
+
+                <div class="pagoda-pagoda-view">
+                    <button onclick="showPagoda()">Show Pagoda</button>
+
+                </div>
+
+                <div class="pagoda-chit-view">
+                    <button onclick="showChits()">Show Chits</button>
+
+                </div>
+
+                <div class="pagoda-table-view">
+                    <button onclick="showTable()">Show Table</button>
+
+                </div>
+
+                <div class="pagoda-clear-print-list">
+                    <button onclick="clearPrintList()">Clear Print List</button>
+                </div>
+
+                <button class="pagoda-flip">Flip</button>
+                <button class="pagoda-unflip hidden">UnFlip</button>
             </div>
+
+            <div class="pagoda">
+                <div class="pagoda-chart-container">
+                    <div class="pagoda-chart">
+
+                    </div>
+                    <div class="pagoda-student-list-container">
+                        <div class='pagoda-student-search'>
+                            <input class='pagoda-student-search-text' type='text' placeholder='First Name'/>
+                        </div>
+                        <div class="pagoda-student-list"></div>
+                    </div>
+                </div>
+                <div class="pagoda-chit-print"></div>
+                <div class="pagoda-table-print"></div>
+            </div>
+
         </div>
-        <div class="pagoda-chit-print"></div>
-        <div class="pagoda-table-print"></div>
-    </div>
 
-</div>
+        <div class="seatwalla-help-content">
+            <i class='icon-kub-remove seatwalla-help-hide'></i>
+            <h1> Instructions</h1>
+            <p>
+                <b>
+                    <font face="Arial">SeatWalla Instructions</font>
+                </b>
+            </p>
+            <p align="center">
+                <img border="0" src="Seatwalla1.gif" width="493" height="177">
+            </p>
+            <p align="center">Figure 1: Information contained in the seating chart</p>
+            <p>&nbsp;</p>
+            <p align="center">
+                <img border="0" src="Seatwalla2.gif" width="534" height="157">
+            </p>
+            <p align="center">Figure 2: The editing buttons/options become available when
+                              mouse is hovered over a seat.
+            </p>
+            <p>&nbsp;</p>
+            <p>
+                <font face="Arial">
+                    <b>
+                        <font style="font-size: 11pt">To Find:</font>
+                    </b>
+                    <span style="font-size: 11pt">
+                        <br>
+                    </span>
+                    <font style="font-size: 11pt">Use Control-F on windows and Command-F on
+                                                  Mac to find the student on the seating chart.
+                        <br>
+                        <br>
+                        <b>To Save:</b>
+                        <br>
+                                                  Use browser's &quot;Save As&quot; function to save the file in html
+                                                  format. If on Mac OS,
+                                                  choose &quot;Web Page Complete&quot; option. Name it as &quot;Center-Name-Course-Date.html&quot;
+                                                  for
+                                                  future use. For example CVC-2013-11-20.html.
+                        <br>
+                                                  Usually you can perform saving by clicking &quot;Control-S&quot; in
+                                                  Windows OS or
+                                                  &quot;Command-S&quot; in MacOS.
+                        <br>
+                        <br>
+                        <b>To Print:</b>
+                        <br>
+                                                  Use browser's printing function to print the chart. It is same as
+                                                  printing any
+                                                  open web page. First use &quot;Print Preview&quot; function to see how
+                                                  print
+                                                  will appear.
+                                                  Select &quot;Landscape&quot; as page orientation and then print. Refer
+                                                  to your browser's
+                                                  help to see how you can print properly.
+                        <br>
+                        <br>
+                        <b>For Mac</b>
+                        <br>
+                                                  - Use Chrome or Firefox 'command P' to print, change orientation and
+                                                  scale to
+                                                  print it properly. If its a large course, its better to print on two
+                                                  pages and
+                                                  glue them together to keep names readable.
+                        <br>
+                        <b>For Windows</b>
+                        <br>
+                                                  - Use Firefox for good printing experience. Use &quot;Print Preview&quot;
+                                                  to adjust the
+                                                  print output by adjusting the scale and orientation.
+                        <br>
+                        <br>
+                                                  &nbsp;</font>
+                </font>
+            </p>
 
-<div class="seatwalla-help-content">
-    <i class='icon-kub-remove seatwalla-help-hide'></i>
-    <h1> Instructions</h1>
-    <p>
-        <b>
-            <font face="Arial">SeatWalla Instructions</font>
-        </b>
-    </p>
-    <p align="center">
-        <img border="0" src="Seatwalla1.gif" width="493" height="177">
-    </p>
-    <p align="center">Figure 1: Information contained in the seating chart</p>
-    <p>&nbsp;</p>
-    <p align="center">
-        <img border="0" src="Seatwalla2.gif" width="534" height="157">
-    </p>
-    <p align="center">Figure 2: The editing buttons/options become available when
-                      mouse is hovered over a seat.
-    </p>
-    <p>&nbsp;</p>
-    <p><font face="Arial"><b><font style="font-size: 11pt">To Find: </font></b>
-        <span style="font-size: 11pt"><br>
-        </span><font style="font-size: 11pt">Use Control-F on windows and Command-F on
-                                             Mac to find the student on the seating chart.<br>
-                <br>
-            <b>To Save: </b><br>
-                                             Use browser's &quot;Save As&quot; function to save the file in html format. If on Mac OS,
-                                             choose &quot;Web Page Complete&quot; option. Name it as &quot;Center-Name-Course-Date.html&quot; for
-                                             future use. For example CVC-2013-11-20.html. <br>
-                                             Usually you can perform saving by clicking &quot;Control-S&quot; in Windows OS or
-                                             &quot;Command-S&quot; in MacOS.<br>
-                <br>
-            <b>To Print: </b><br>
-                                          Use browser's printing function to print the chart. It is same as printing any
-                                          open web page. First use &quot;Print Preview&quot; function to see how print
-                                          will appear.
-                                             Select &quot;Landscape&quot; as page orientation and then print. Refer to your browser's
-                                             help to see how you can print properly.<br>
-                <br>
-            <b>For Mac</b><br>
-                                          - Use Chrome or Firefox 'command P' to print, change orientation and scale to
-                                          print it properly. If its a large course, its better to print on two pages and
-                                             glue them together to keep names readable.<br>
-            <b>For Windows</b><br>
-                                             - Use Firefox for good printing experience. Use &quot;Print Preview&quot; to adjust the
-                                             print output by adjusting the scale and orientation.<br>
-                <br>
-                                             &nbsp;</font></font></p>
+        </div>
 
-</div>
+        <div class="pagoda-help-content">
+            <i class='icon-kub-remove pagoda-help-hide'></i>
+            <h1> Instructions</h1>
+            <ul>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Select the floor to assign
+                                                               the students.
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Drag and drop student from
+                                                               list on the right to the cells
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Use Back to Seat button to go
+                                                               back to seating. See the students with pagoda cell
+                                                               displayed.
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">To reassign the student to a
+                                                               different cell, click on delete icon on the top right of
+                                                               the
+                                                               cell. After
+                                                               this the student will return back to the student list on
+                                                               the
+                                                               right column.
+                                                               You can drag the name to a different cell now.
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Click on &quot;Show Chits&quot; to
+                                                               create chits which can be given to students with cell
+                                                               with
+                                                               optional cell
+                                                               sharing information.
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Click on &quot;Show Table&quot; to
+                                                               create list of students with cell numbers to display on
+                                                               Pagoda
+                                                               door.
+                    </font>
+                </li>
+                <li>
+                    <font face="Arial" style="font-size: 11pt">Print pagoda one floor by one
+                                                               floor to get the print out without page breaks.
+                        <br>
+                                                               &nbsp;</font>
+                </li>
+        </div>
 
-<div class="pagoda-help-content">
-    <i class='icon-kub-remove pagoda-help-hide'></i>
-    <h1> Instructions</h1>
-    <ul>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Select the floor to assign
-                                                       the students.
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Drag and drop student from
-                                                       list on the right to the cells
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Use Back to Seat button to go
-                                                       back to seating. See the students with pagoda cell displayed.
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">To reassign the student to a
-                                                       different cell, click on delete icon on the top right of the
-                                                       cell. After
-                                                       this the student will return back to the student list on the
-                                                       right column.
-                                                       You can drag the name to a different cell now.
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Click on &quot;Show Chits&quot; to
-                                                       create chits which can be given to students with cell with
-                                                       optional cell
-                                                       sharing information.
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Click on &quot;Show Table&quot; to
-                                                       create list of students with cell numbers to display on Pagoda
-                                                       door.
-            </font>
-        </li>
-        <li>
-            <font face="Arial" style="font-size: 11pt">Print pagoda one floor by one
-                                                       floor to get the print out without page breaks.
-                <br>
-                                                       &nbsp;</font>
-        </li>
-</div>
-
-</body>
+    </body>
 
 </html>

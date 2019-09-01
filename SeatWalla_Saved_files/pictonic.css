@@ -6,9 +6,9 @@
 @font-face
 {
     font-family: pictonic;
-    src: url('pictonic.woff');
-    src: url('pictonic.woff') format('woff'),
-		url('pictonic.eot?#iefix') format('embedded-opentype'),
+    src: url('pictonic.eot');
+    src: url('pictonic.eot?#iefix') format('embedded-opentype'),
+        url('pictonic.woff') format('woff'),
         url('pictonic.ttf') format('truetype'),
         url('pictonic.svg') format('svg');
     font-weight: normal;

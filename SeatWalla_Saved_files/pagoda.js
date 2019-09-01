@@ -120,37 +120,26 @@
                                             "</div>"
         ),
 
-        chitTemplateNewShared: _.template("<div class='pagoda-chit new'>" +
+        chitTemplate: _.template("<div class='pagoda-chit new'>" +
                                  "<div class='pagoda-chit-student-name'><%=student.firstName%>&nbsp;<%=student.secondName%>,&nbsp;&nbsp;<%=student.label%></div>" +
                                  "<%if(student.share == 'AM') {%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the morning from<br><b>4:30-6:30 AM</b>  & <b>10-11 AM</b>.</div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the morning from<br><b>4:30-6:30 AM</b>  & <b>10-11 AM</b></div>" +
                                  " <% } else if (student.share == 'PM'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the afternoon from <br><b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b>.</div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days in the afternoon from <br><b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% } else if (student.share == '67'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on days 6 and 7 from <br><b>4:30 - 6:30 AM</b>, <b>10-11 AM</b>, <b>1:00-2:20 PM</b> & <b>4-5 PM</b>.</div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on days 6 and 7 from <br><b>4:30 - 6:30 AM</b>, <b>10-11 AM</b>, <b>1:00-2:20 PM</b> & <b>4-5 PM</b></div>" +
                                  "<% } else if (student.share == '89'){%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on day 8 & 9 from<br><b>4:30 - 6:30 AM</b>,  <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b>.</div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on day 8 & 9 from<br><b>4:30 - 6:30 AM</b>,  <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% } else {%>" +
-                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days from<br><b><b>4:30 - 6:30 AM</b>, <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b>.</div>" +
+                                 "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b> on all days from<br><b><b>4:30 - 6:30 AM</b>, <b>10 - 11 AM</b>,  <b>1:00 - 2:20 PM</b> & <b>4 - 5 PM</b></div>" +
                                  "<% }%>" +
                                  "<ul>" +
-                                 "<li class='pagoda-chit-instr'><b>If you do not wish to use your cell, please inform the manager</b>.</li>" +
-                                 "<li class='pagoda-chit-instr'><b>A manager will be in front of Pagoda at <span class='pagoda-or-time'>3:45 PM</span> to help you find your cell</b>.</li>" +
-                                 "<li class='pagoda-chit-instr'><b>Be sure to read the Pagoda Guidelines</b>.</li>" +
-                                 "<li class='pagoda-chit-instr'><b>Please be in the meditation hall for all the group sittings, instructions and discourses</b>.</li>" +
+                                 "<li class='pagoda-chit-instr'><b>If you do not wish to use your cell, please inform the manager</b></li>" +
+                                 "<li class='pagoda-chit-instr'><b>Please contact manager if you can't find the cell</b></li>" +
+                                 "<li class='pagoda-chit-instr'><b>Be sure to read the Pagoda Guidelines</b></li>" +
+                                 "<li class='pagoda-chit-instr'><b>Please be in the meditation hall for all the group sittings, instructions and discourses</b></li>" +
                                  "</ul>" +
                                  "</div>"
-        ),
-        chitTemplateNew: _.template("<div class='pagoda-chit old'>" +
-                                    "<div class='pagoda-chit-student-name'><%=student.firstName%>&nbsp;<%=student.secondName%>,&nbsp;&nbsp;<%=student.label%></div>" +
-                                    "<div class='pagoda-chit-usage-text'>You may use cell# <b><%=student.cell%></b></div>" +
-                                    "<ul>" +
-                                    "<li class='pagoda-chit-instr'><b>If you do not wish to use your cell, please inform the manager</b></li>" +
-                                    "<li class='pagoda-chit-instr'><b>A manager will be in front of Pagoda at <span class='pagoda-or-time'>3:45 PM</span> to help you find your cell</b>.</li>" +
-                                    "<li class='pagoda-chit-instr'><b>Be sure to read the Pagoda Guidelines posted at the entrance to the cell area</b></li>" +
-                                    "<li class='pagoda-chit-instr'><b>Please be in the meditation hall for all the group sittings, instructions, new student checkings, and from <b>6-9 PM</b></li>" +
-                                    "</ul>" +
-                                    "</div>"
         ),
 
         chitTemplateOld: _.template("<div class='pagoda-chit old'>" +
@@ -238,10 +227,6 @@
             $(".pagoda-cell").removeClass("seatwalla-seat-container-flip");
         });
 
-        $(".orientation-time").change(function() {
-            $(".pagoda-or-time").html($(".orientation-time").val());
-        });
-
         //pagodawalla.showStudentList();
 
     };
@@ -294,7 +279,7 @@
 
         $(".pagoda-student-list").empty();
 
-        //pagodawalla.updateStudentList();
+        pagodawalla.updateStudentList();
 
         var students = $(".pagoda-student-list-item");
 
@@ -392,6 +377,10 @@
         var numFloors = pagodaObject[center][gender];
         if (_.size(numFloors) == 2) {
             $(".pagoda-levels-select option[value='2']").remove();
+        }
+        else if (_.size(numFloors) == 1) {
+            $(".pagoda-levels-select option[value='2']").remove();
+            $(".pagoda-levels-select option[value='1']").remove();
         }
         _.each(pagodaD, function(floor, key) {
             pagodawalla.drawFloor(key, floor);
@@ -732,7 +721,9 @@
             $chitView.append($("<span>There are no students assigned to print</span>"));
         }
         else {
-
+            if (printList.length % 2 != 0) {
+                printList.push({});
+            }
             var table = "<table width=100%>";
             _.each(printList, function(student, index) {
                 if (index % 2 == 0) {
@@ -743,15 +734,11 @@
                     table += "";
                 }
                 else {
-                    if (student.num === 0) { //New Student
-                        if (student.share == "None") { //Not Shared
-                            table += options.chitTemplateNew({student: student});
-                        }
-                        else { //Shared
-                            table += options.chitTemplateNewShared({student: student});
-                        }
-                    }else { //old Student
+                    if (student.share == "None") {
                         table += options.chitTemplateOld({student: student});
+                    }
+                    else {
+                        table += options.chitTemplate({student: student});
                     }
                 }
 
@@ -760,10 +747,6 @@
                     table += "</tr>"
                 }
             });
-
-            if (printList.length % 2 != 0) {
-                table += "<td></td>";
-            }
             table += "</table>";
 
             $chitView.append($(table));
@@ -928,7 +911,6 @@
         else if (method == "cancelAssignment") {
             pagodawalla.cancelAssignment(options.$cell, options.justInPagoda);
         }
-
     };
 
     $.fn.pagoda = function(method, options) {

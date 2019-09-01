@@ -67,14 +67,6 @@ input {
     padding: 10px 10px 0 10px;
 }
 
-.seatwalla-commlang {
-    top: 5px;
-    position: absolute;
-    right: 1px;    
-    font-size: 12px;
-    color: red;
-}
-
 .seatwalla-step {
     font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
     font-size: 14px;
@@ -187,15 +179,25 @@ input {
     height: 38px;
     width: 97%;
     overflow: hidden;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
 }
 
 .seatwalla-first-name {
     font-size: 20px;
+    display: inline-block;
+    width: 100%;
     white-space: nowrap;
     text-overflow: clip;
     overflow: hidden;
+    margin-top: -1px;
+    margin-bottom: -1px;
+	}
+/* ***P2019-06 */
+.seatwalla-commlang {
+    display: inline-block;
+    width: 20%;
+    text-align: right;
 }
 
 .pagodawalla-first-name {
@@ -226,21 +228,25 @@ input {
 
 .seatwalla-second-name {
     display: inline-block;
-    width: 45%;
+/* ***P2019-06 */
+    width: 70%;
     white-space: nowrap;
     text-overflow: clip;
     overflow: hidden;
+    margin-top: -2px;
 }
 
 .seatwalla-age {
     display: inline-block;
-    width: 55%;
+/* ***P2019-06 */
+    width: 30%;
     text-align: right;
 }
 
-.seatwalla-age: before {
+/* ***P2019-06 */
+/*.seatwalla-age: before {
     content: ","
-}
+}*/
 
 .seatwalla-delete {
     display: inline-block;
@@ -639,7 +645,8 @@ input {
     display: inline-block;
     font-size: 12px;
     font-weight: bold;
-    width: calc(100% - 4px);
+/* ***P2019-06 */
+    width: calc(80% - 4px);
     height: 20px;
     text-shadow: none;
     border-radius: 4px;

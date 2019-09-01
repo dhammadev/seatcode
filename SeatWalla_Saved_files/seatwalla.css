@@ -67,14 +67,6 @@ input {
     padding: 10px 10px 0 10px;
 }
 
-.seatwalla-commlang {
-    top: 5px;
-    position: absolute;
-    right: 1px;    
-    font-size: 12px;
-    color: red;
-}
-
 .seatwalla-step {
     font-family: trebuchet, verdana, "Trebuchet MS", tahoma, arial, helvetica, sans-serif;
     font-size: 14px;
@@ -691,7 +683,7 @@ td {
 }
 
 .pagoda-chit-usage-text {
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .pagoda-chit-instr {
@@ -748,12 +740,6 @@ td {
 
 .pagoda-flip-controls {
     display: inline-block;
-}
-
-.pagoda-orientation-time {
-    color: blue;
-    font-size: 20px;
-    margin-bottom: 5px;
 }
 
 .seatwalla-check-container {

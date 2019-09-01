@@ -5,9 +5,9 @@
 <meta charset="UTF-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>SeatWalla</title>
-<link rel="stylesheet" href="pictonic.css">
-<link rel="stylesheet" href="pictonic.woff">
 <link rel="stylesheet" href="seatwalla.css">
+<link rel="stylesheet" href="pictonic.woff">
+<link rel="stylesheet" href="pictonic.css">
 <link rel="stylesheet" href="print.css" media="print">
 <script src="jquery.js"></script>
 <script src="browserDetection.js"></script>
@@ -72,6 +72,11 @@ function onload(langChanged) {
     var $pagoda = $(".pagoda-container");
     $pagoda.pagoda();
     $pagoda.data("pagoda").execute("init");
+    if ($(".pagoda-container").css("display") === "block") {
+        var $seat = $(".seatwalla-container");
+        assignCells();
+    }
+
 }
 ;
 
@@ -330,7 +335,7 @@ function selectGender(gender) {
     <div class="seatwalla-step-text"><%=HALL_STEP_1%></div>
     <div class="seatwalla-step">
         <div class="seatwalla-help-text"><%=HALL_DHAMMAREG_ACCOUNT%>
-            <a class="seatwalla-dhamma-reg" href="mailto:support@dhammareg.dhamma.org">Dhamma Reg Support</a>
+            <a class="seatwalla-dhamma-reg" href="mailto:support@dhammareg.dhamma.org">DhammaReg Support</a>
         </div>
         <div>
             <a class="seatwalla-link" href="<%=DHAMMA_REG_SITE%>" target="_blank">
@@ -444,9 +449,9 @@ function selectGender(gender) {
             </select>
         </div>
 
+
         <div class="pagoda-back-to-seating">
             <button class="pagoda-back-to-seating" onclick="showSeating()"><%=PAGODA_BACK_TO_SEATING%></button>
-
         </div>
 
         <div class="pagoda-pagoda-view">
@@ -487,7 +492,14 @@ function selectGender(gender) {
                 <div class="pagoda-student-list"></div>
             </div>
         </div>
-        <div class="pagoda-chit-print"></div>
+        <div class="pagoda-chit-print-container">
+            <div class="pagoda-orientation-time">
+                <span class="pagoda-orientation-time-message"><%=PAGODA_NEW_STUDENT_ORIENTATION_TIME%></span>
+                <input class="orientation-time" type="text" name="orientationTime" value="3:45 pm">
+            </div>
+            <div class="pagoda-chit-print"></div>
+
+        </div>
         <div class="pagoda-table-print"></div>
     </div>
 

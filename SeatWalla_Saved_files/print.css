@@ -89,10 +89,6 @@
         background-color: #ddd;
     }
 
-    .pagoda-orientation-time {
-        display: none;
-    }
-
     .seatwalla-seat:nth-of-type(6) {
         page-break-after: always;
         -webkit-region-break-after: always;
